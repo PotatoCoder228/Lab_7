@@ -1,10 +1,9 @@
 package ru.potatocoder228.itmo.lab6.connection;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 public class Sender {
     private Socket socket;
@@ -23,13 +22,18 @@ public class Sender {
         }
     }
 
-    public void sendCommand(Object command) {
+    public void sendMessage(AskMsg msg) {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-            oos.writeObject(command);
+            oos.writeObject(msg);
             //oos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void sendMap(HashMap<?, ?> map) throws IOException {
+        ObjectOutputStream os = new ObjectOutputStream(socket.getOutputStream());
+        os.writeObject(map);
+        //os.close();
     }
 }

@@ -1,30 +1,28 @@
 package ru.potatocoder228.itmo.lab6.connection;
 
-public class AnswerMsg implements Response{
+import java.io.Serializable;
+
+public class AskMsg implements Serializable {
+    String msg;
     private static final long serialVersionUID = 666;
-    private String msg = null;
     private Status status;
-    public AnswerMsg(){
-        msg = "";
-        status = Status.FINE;
-    }
     public void setMessage(String message){
         this.msg = message;
     }
-    public AnswerMsg clear(){
+    public AskMsg clear(){
         msg = "";
         return this;
     }
-    public AnswerMsg info(Object str){
+    public AskMsg info(Object str){
         msg = str.toString();// + "\n";
         return this;
     }
-    public AnswerMsg error(Object str){
+    public AskMsg error(Object str){
         msg = "Error: " + str.toString();
         setStatus(Status.ERROR);
         return this;
     }
-    public AnswerMsg setStatus(Status st){
+    public AskMsg setStatus(Status st){
         status = st;
         return this;
     }
@@ -33,12 +31,5 @@ public class AnswerMsg implements Response{
     }
     public Status getStatus(){
         return status;
-    }
-    @Override
-    public String toString(){
-        if (getStatus() == Status.ERROR) {
-            return "Err: " + getMessage();
-        }
-        return getMessage();
     }
 }

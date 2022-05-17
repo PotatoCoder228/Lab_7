@@ -25,7 +25,7 @@ public class FileManager implements ReaderWriter {
         private String path;
         private File file;
         private LinkedList<Dragon> collection= new LinkedList<>();
-        private LinkedHashSet<Integer> idList = new LinkedHashSet<>();
+        public static LinkedHashSet<Integer> idList = new LinkedHashSet<>();
         private Integer id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
         private String name;
         private long x_1;
@@ -45,6 +45,7 @@ public class FileManager implements ReaderWriter {
                         path = null;
                         System.out.println("Некорректная переменная окружения.");
                 }
+                path = path.replace(";", "");
         }
 
         public void setPath(String pth) {
@@ -78,7 +79,7 @@ public class FileManager implements ReaderWriter {
                 path = null;
         }
 
-        public void parseFile() throws FileException, ParserConfigurationException, SAXException, IOException {
+        public LinkedList<Dragon> parseFile() {
                 try {
                         boolean uncorrectObject;
                         if (path == null) throw new EmptyPathException();
@@ -105,8 +106,10 @@ public class FileManager implements ReaderWriter {
                                 Dragon newDragon = new Dragon(name, coordinates,age, description, speaking, type, cave);
                                 newDragon.setCreationDate();
                                 newDragon.setId();
-                                if (!(uncorrectObject && newDragon.validate())){
+                                if (uncorrectObject && !newDragon.validate()){
                                         System.out.println("Объект некорректен и не будет добавлен в коллекцию.");
+                                }else {
+                                        collection.add(newDragon);
                                 }
                         }
                 } catch (FileNotFoundException e) {
@@ -120,7 +123,7 @@ public class FileManager implements ReaderWriter {
                                 bos.write(buffer, 0, buffer.length);
                                 bos.flush();
                                 System.out.println("Файл отсутствовал, но был создан.");
-                        }catch (CannotCreateFileException ex) {
+                        }catch (CannotCreateFileException|IOException ex) {
                                 path = null;
                                 System.out.println("Ошибка доступа. Чтение и сохранение в файл невозможно.");
                         }
@@ -144,6 +147,9 @@ public class FileManager implements ReaderWriter {
                 } catch (IOException ex) {
                         System.out.println("Ошибка чтения. ");
                         path = null;
+                }catch (FileException|ParserConfigurationException e) {
+                        System.out.println("Ошибка при работе с файлом.");
+                        path = null;
                 } catch (SAXException e) {
                         System.out.println("Ошибка при анализе данных в файле.");
                         path = null;
@@ -151,6 +157,7 @@ public class FileManager implements ReaderWriter {
                         System.out.println("Некорректное имя переменной окружения.");
                         path = null;
                 }
+                return collection;
         }
 
         private void create(File file) throws CannotCreateFileException{
