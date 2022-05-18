@@ -50,7 +50,8 @@ public class Coordinates {
     public Double getY() {
         return y;
     }
-    public boolean validate(){
-        return!(x > 436||y>101||Double.isNaN(y));
+
+    public boolean validate() {
+        return !(x > 436 || y > 101 || Double.isNaN(y));
     }
 }

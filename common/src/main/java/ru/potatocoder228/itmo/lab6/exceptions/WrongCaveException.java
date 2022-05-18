@@ -9,6 +9,7 @@ public class WrongCaveException extends RuntimeException {
         super(s);
         System.out.println(s);
     }
+
     public WrongCaveException() {
         super();
     }

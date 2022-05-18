@@ -1,7 +1,6 @@
 package ru.potatocoder228.itmo.lab6.commands;
 
 
-
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
 
 import java.util.Map;
@@ -14,6 +13,7 @@ public class AddIfMax implements Command {
     protected String nameOfCommand;
     protected String description;
     protected String arg;
+
     /**
      * Конструктор, задающий параметры для создания объекта
      *
@@ -27,12 +27,14 @@ public class AddIfMax implements Command {
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
+
     @Override
     public String execute(CollectionManager collectionManager) {
-       //
+        //
         return nameOfCommand;
     }
-    public void setArg(String arg){
+
+    public void setArg(String arg) {
         this.arg = arg;
     }
 }

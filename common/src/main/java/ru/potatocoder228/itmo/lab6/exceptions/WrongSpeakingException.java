@@ -9,6 +9,7 @@ public class WrongSpeakingException extends WrongFieldException {
         super(s);
         System.out.println(s);
     }
+
     public WrongSpeakingException() {
         super();
     }

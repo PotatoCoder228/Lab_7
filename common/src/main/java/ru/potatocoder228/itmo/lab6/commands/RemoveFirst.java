@@ -13,6 +13,7 @@ public class RemoveFirst implements Command {
     protected String nameOfCommand;
     protected String description;
     protected String arg;
+
     /**
      * Конструктор, задающий параметры для создания объекта
      *
@@ -26,12 +27,14 @@ public class RemoveFirst implements Command {
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
+
     @Override
     public String execute(CollectionManager collectionManager) {
         //
         return nameOfCommand;
     }
-    public void setArg(String arg){
+
+    public void setArg(String arg) {
         this.arg = arg;
     }
 }

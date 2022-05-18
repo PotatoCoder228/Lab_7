@@ -9,6 +9,7 @@ public class WrongCoordinatesException extends WrongFieldException {
         super(s);
         System.out.println(s);
     }
+
     public WrongCoordinatesException() {
         super();
     }

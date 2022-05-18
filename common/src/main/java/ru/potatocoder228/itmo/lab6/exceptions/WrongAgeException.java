@@ -9,6 +9,7 @@ public class WrongAgeException extends WrongFieldException {
         super(s);
         System.out.println(s);
     }
+
     public WrongAgeException() {
         super();
     }

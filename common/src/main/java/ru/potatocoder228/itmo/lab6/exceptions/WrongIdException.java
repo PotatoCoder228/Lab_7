@@ -9,6 +9,7 @@ public class WrongIdException extends WrongFieldException {
         super(s);
         System.out.println(s);
     }
+
     public WrongIdException() {
         super();
     }

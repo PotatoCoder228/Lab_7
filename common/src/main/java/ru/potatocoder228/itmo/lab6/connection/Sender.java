@@ -31,6 +31,7 @@ public class Sender {
             e.printStackTrace();
         }
     }
+
     public void sendMap(HashMap<?, ?> map) throws IOException {
         ObjectOutputStream os = new ObjectOutputStream(socket.getOutputStream());
         os.writeObject(map);

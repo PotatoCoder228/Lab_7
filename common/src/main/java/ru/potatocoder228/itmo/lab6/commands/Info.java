@@ -12,6 +12,7 @@ public class Info implements Command {
     protected String nameOfCommand;
     protected String description;
     protected String arg;
+
     /**
      * Конструктор, задающий параметры для создания объекта
      *
@@ -31,7 +32,8 @@ public class Info implements Command {
         //
         return nameOfCommand;
     }
-    public void setArg(String arg){
+
+    public void setArg(String arg) {
         this.arg = arg;
     }
 }

@@ -9,6 +9,7 @@ public class WrongDateException extends WrongFieldException {
         super(s);
         System.out.println(s);
     }
+
     public WrongDateException() {
         super();
     }

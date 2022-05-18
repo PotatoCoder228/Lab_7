@@ -27,12 +27,15 @@ public class Exit implements Command {
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
+
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
+        System.out.println("Завершение работы сервера...");
+        System.exit(0);
         return nameOfCommand;
     }
-    public void setArg(String arg){
+
+    public void setArg(String arg) {
         this.arg = arg;
     }
 }

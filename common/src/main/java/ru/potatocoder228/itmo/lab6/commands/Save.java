@@ -12,6 +12,7 @@ public class Save implements Command {
     protected String nameOfCommand;
     protected String description;
     protected String arg;
+
     /**
      * Конструктор, задающий параметры для создания объекта
      *
@@ -20,8 +21,8 @@ public class Save implements Command {
      */
 
     public Save(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "save(только для сервера.)";
-        description = "сохранить коллекцию в файл.";
+        nameOfCommand = "save";
+        description = "сохранить коллекцию в файл(только для сервера.)";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -32,7 +33,8 @@ public class Save implements Command {
         //
         return nameOfCommand;
     }
-    public void setArg(String arg){
+
+    public void setArg(String arg) {
         this.arg = arg;
     }
 }

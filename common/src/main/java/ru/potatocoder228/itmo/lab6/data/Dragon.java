@@ -24,59 +24,58 @@ public class Dragon implements Collectionable, Serializable {
     /**
      * Конструктор, задающий параметры для создания дракона
      *
-     * @param nm           имя
-     * @param age          возраст
-     * @param description  описание
-     * @param speaking     способность говорить
-     * @param type         тип дракона
-     * @param cave         глубина пещеры
+     * @param nm          имя
+     * @param age         возраст
+     * @param description описание
+     * @param speaking    способность говорить
+     * @param type        тип дракона
+     * @param cave        глубина пещеры
      */
 
     public Dragon(String nm, Coordinates coordinates, int age, String description, Boolean speaking, DragonType type, DragonCave cave) {
         this.name = nm;
         this.coordinates = coordinates;
         this.age = age;
-        this.description= description;
+        this.description = description;
         this.speaking = speaking;
         this.type = type;
         this.cave = cave;
     }
-    public static class SortingComparator implements Comparator<Dragon> {
-        public int compare(Dragon first, Dragon second) {
-            int result = Double.compare(first.getCoordinates().getX(), second.getCoordinates().getX());
-            if ( result == 0 ) {
-                // both X are equal -> compare Y too
-                result = Double.compare(first.getCoordinates().getY(), second.getCoordinates().getY());
-            }
-            return result;
-        }
-    }
-    public Coordinates getCoordinates(){
+
+    public Coordinates getCoordinates() {
         return coordinates;
     }
-    public LocalDateTime getCreationDate(){
+
+    public LocalDateTime getCreationDate() {
         return creationDate;
     }
-    public void setCreationDate(){
-        creationDate= LocalDateTime.now();
+
+    public void setCreationDate() {
+        creationDate = LocalDateTime.now();
     }
-    public int getId(){
+
+    public int getId() {
         return id;
     }
-    public void setId(){
+
+    public void setId() {
         id = this.hashCode();
     }
-    public String getName(){
+
+    public String getName() {
         return name;
     }
-    public void setName(String s){
+
+    public void setName(String s) {
         name = s;
     }
-    public int getAge(){
+
+    public int getAge() {
         return age;
     }
+
     @Override
-    public String toString(){
+    public String toString() {
         String strCreationDate = creationDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String s = "";
         s += "  \"id\" : " + id + ",\n";
@@ -84,29 +83,43 @@ public class Dragon implements Collectionable, Serializable {
         s += "  \"coordinates\" : " + coordinates.toString() + ",\n";
         s += "  \"creationDate\" : " + "\"" + strCreationDate + "\"" + ",\n";
         s += "  \"age\" : " + age + ",\n";
-        s += "  \"coordinates\" : " +  "\"" + coordinates.toString() + "\"" + ",\n";
+        s += "  \"coordinates\" : " + "\"" + coordinates.toString() + "\"" + ",\n";
         s += "  \"description\" : " + "\"" + description + "\"" + ",\n";
         s += "  \"speaking\" : " + "\"" + speaking.toString() + "\"" + ",\n";
         s += "  \"type\" : " + type.toString() + "\n";
         s += "  \"cave\" : " + cave.toString() + "\n";
         return s;
     }
+
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || this.getClass()!= obj.getClass()) return false;
-        Dragon another = (Dragon)obj;
+        if (obj == null || this.getClass() != obj.getClass()) return false;
+        Dragon another = (Dragon) obj;
         return this.getId() == another.getId();
     }
-    public int compareTo(Collectionable dragon){
+
+    public int compareTo(Collectionable dragon) {
         return Long.compare(this.age, dragon.getAge());
     }
-    public boolean validate(){
+
+    public boolean validate() {
         return (
-                coordinates!=null && coordinates.validate() &&
+                coordinates != null && coordinates.validate() &&
                         age > 0 &&
-                        cave != null && (id>0) &&
-                        name!=null && !name.equals("") &&
-                        creationDate!=null
+                        cave != null && (id > 0) &&
+                        name != null && !name.equals("") &&
+                        creationDate != null
         );
+    }
+
+    public static class SortingComparator implements Comparator<Dragon> {
+        public int compare(Dragon first, Dragon second) {
+            int result = Double.compare(first.getCoordinates().getX(), second.getCoordinates().getX());
+            if (result == 0) {
+                // both X are equal -> compare Y too
+                result = Double.compare(first.getCoordinates().getY(), second.getCoordinates().getY());
+            }
+            return result;
+        }
     }
 }

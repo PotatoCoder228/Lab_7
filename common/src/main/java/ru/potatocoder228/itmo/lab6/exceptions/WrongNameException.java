@@ -9,6 +9,7 @@ public class WrongNameException extends WrongFieldException {
         super(s);
         System.out.println(s);
     }
+
     public WrongNameException() {
         super();
     }

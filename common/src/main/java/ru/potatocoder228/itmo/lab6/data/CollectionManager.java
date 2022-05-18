@@ -9,14 +9,19 @@ import java.util.NoSuchElementException;
 public class CollectionManager {
     private LinkedList<Dragon> collection;
     private LinkedHashSet<Integer> idList = FileManager.idList;
-    public CollectionManager(LinkedList<Dragon> collection){
+
+    public CollectionManager(LinkedList<Dragon> collection) {
         this.collection = collection;
     }
+
     public int getSize() {
         return collection.size();
     }
 
-    public String getType() { return Dragon.class.getName(); }
+    public String getType() {
+        return Dragon.class.getName();
+    }
+
     public Dragon getFirst() {
         try {
             return collection.getFirst();
@@ -24,6 +29,7 @@ public class CollectionManager {
             return null;
         }
     }
+
     public Dragon getLast() {
         try {
             return collection.getLast();
@@ -31,6 +37,7 @@ public class CollectionManager {
             return null;
         }
     }
+
     public Dragon getById(int id) {
         for (Dragon dragon : collection) {
             if (dragon.getId() == id) {
@@ -39,9 +46,11 @@ public class CollectionManager {
         }
         return null;
     }
+
     public void addLast(Dragon dragon) {
         collection.add(dragon);//TODO id
     }
+
     public void addById(Dragon dragon, int id) {
         collection.add(id, dragon);//TODO
     }

@@ -8,6 +8,7 @@ import java.util.Scanner;
 public class Receiver {
     private Socket socket;
     private Scanner scanner;
+
     public Receiver(Socket socket) throws IOException {
         this.socket = socket;
     }
@@ -21,7 +22,6 @@ public class Receiver {
     public AnswerMsg receiveCommand() throws IOException, ClassNotFoundException {
         ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
         AnswerMsg command = (AnswerMsg) is.readObject();
-        System.out.println(command == null);
         return command;
     }
 }

@@ -1,7 +1,6 @@
 package ru.potatocoder228.itmo.lab6.server;
 
 import ru.potatocoder228.itmo.lab6.commands.Command;
-import ru.potatocoder228.itmo.lab6.connection.AskMsg;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,15 +9,21 @@ import java.util.Scanner;
 public class ServerConsole {
     HashMap<String, Command> map;
     CommandManager commandManager;
-    public ServerConsole(HashMap<String, Command> map, CommandManager commandManager){
+
+    public ServerConsole(HashMap<String, Command> map, CommandManager commandManager) {
         this.map = map;
         this.commandManager = commandManager;
     }
-    public void parseCommand(){
+
+    public void parseCommand() {
         try {
             Scanner scanner = new Scanner(System.in);
             if (System.in.available() > 0) {
-                String line = scanner.nextLine();
+                String line = scanner.nextLine().toLowerCase();
+                if (line.equals("exit")) {
+                    System.out.println("Завершение работы сервера...");
+                    System.exit(0);
+                }
                 String[] lines = line.split("\\s+");
                 if (lines.length == 2) {
                     String clientMessage = commandManager.run(lines[0], lines[1], map);
@@ -28,10 +33,11 @@ public class ServerConsole {
                     String clientMessage = commandManager.run(lines[0], "", map);
                     System.out.println(clientMessage);//TODO
                 } else {
-                    System.out.println("Мы соснули");
+                    System.out.println("Некорректная команда.");
                 }
+                System.out.print("Введите команду:");
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println("Игнорь в команд манагере");
         }
     }
