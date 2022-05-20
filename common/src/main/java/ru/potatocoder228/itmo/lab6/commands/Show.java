@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6.commands;
 
 
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
+import ru.potatocoder228.itmo.lab6.data.Dragon;
 
 import java.util.Map;
 
@@ -31,8 +32,11 @@ public class Show implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "Вот все объекты коллекции:\n";
+        for(Dragon dragon: collectionManager.getCollection()){
+                status += dragon.toString();
+            }
+        return status;
     }
 
     public void setArg(String arg) {

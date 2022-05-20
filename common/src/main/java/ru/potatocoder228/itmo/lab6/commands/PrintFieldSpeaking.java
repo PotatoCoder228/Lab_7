@@ -36,7 +36,7 @@ public class PrintFieldSpeaking implements Command {
         String status = "";
         collectionManager.getCollection().sort(Collections.reverseOrder());
         for(Dragon dragon: collectionManager.getCollection()){
-            status += dragon.getSpeaking();
+            status += "\n"+dragon.getSpeaking();
         }
         return status;
     }

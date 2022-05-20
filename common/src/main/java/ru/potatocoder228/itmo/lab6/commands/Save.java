@@ -30,8 +30,8 @@ public class Save implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        collectionManager.saveCollection();
+        return "Коллекция успешно сохранена.";
     }
 
     public void setArg(String arg) {

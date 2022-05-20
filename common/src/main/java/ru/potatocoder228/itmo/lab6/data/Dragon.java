@@ -91,7 +91,7 @@ public class Dragon implements Collectionable, Serializable {
         s += "  \"description\" : " + "\"" + description + "\"" + ",\n";
         s += "  \"speaking\" : " + "\"" + speaking.toString() + "\"" + ",\n";
         s += "  \"type\" : " + type.toString() + "\n";
-        s += "  \"cave\" : " + cave.toString() + "\n";
+        s += "  \"cave\" : " + cave.getDepth() + "\n";
         return s;
     }
 
@@ -131,5 +131,10 @@ public class Dragon implements Collectionable, Serializable {
             }
             return result;
         }
+    }
+    public String[] getAllFields() {
+        return new String[]{name, id.toString(), String.valueOf(coordinates.getX()),
+                coordinates.getY().toString(), creationDate.format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")), Integer.toString(age), description, speaking.toString(),
+                type.toString(), Float.toString(cave.getDepth())};
     }
 }

@@ -31,8 +31,13 @@ public class UpdateId implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        collectionManager.getCollection().stream()
+                .filter(w->w.getId() == collectionManager.getNewDragon().getId())
+                .forEach(w->collectionManager.getCollection().remove(collectionManager.getNewDragon()));
+        collectionManager.getCollection().add(collectionManager.getNewDragon());
+        status = "Объект успешно обновлён.";
+        return status;
     }
 
     public void setArg(String arg) {

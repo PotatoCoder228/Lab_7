@@ -271,4 +271,37 @@ public class FileManager implements ReaderWriter {
         }
         return uncorrectObject;
     }
+    public void writeObjects(LinkedList<Dragon> list){
+        try {
+            FileOutputStream fos = new FileOutputStream(path);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            String text = "<Dragons>";
+            for (Dragon dragon : list) {
+                String[] fields = dragon.getAllFields();
+                String begin = "\n\t<Dragon>";
+                String name = "\n\t\t<name>" + fields[0] + "</name>";
+                String id = "\n\t\t<id>" + fields[1] + "</id>";
+                String x = "\n\t\t<coordinate_x>" + fields[2] + "</coordinate_x>";
+                String y = "\n\t\t<coordinate_y>" + fields[3] + "</coordinate_y>";
+                String date = "\n\t\t<creationDate>" + fields[4] + "</creationDate>";
+                String age = "\n\t\t<age>" + fields[5] + "</age>";
+                String description = "\n\t\t<description>" + fields[6] + "</description>";
+                String speaking = "\n\t\t<speaking>" + fields[7] + "</speaking>";
+                String type = "\n\t\t<type>" + fields[8] + "</type>";
+                String cave = "\n\t\t<cave>" + fields[9] + "</cave>";
+                String end = "\n\t</Dragon>";
+                text += begin + name + id + x + y + date + age + description + speaking + type + cave + end;
+            }
+            text += "\n</Dragons>";
+            byte[] buffer = text.getBytes();
+            bos.write(buffer, 0, buffer.length);
+            bos.flush();
+            System.out.println("Сохранение успешно проведено.");
+        } catch (IOException e) {
+            System.out.println("Ошибка чтения.");
+        } catch (NullPointerException e) {
+            System.out.println("Вы не ввели переменную окружения, в которой лежит путь к файлу.");
+            System.out.println("Сохранение невозможно.");
+        }
+    }
 }

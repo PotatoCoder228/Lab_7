@@ -31,8 +31,9 @@ public class RemoveGreater implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        collectionManager.getCollection().stream().filter(w -> w.getAge() > Integer.parseInt(arg)).forEach(w->collectionManager.getCollection().remove(w));
+        return status;
     }
 
     public void setArg(String arg) {

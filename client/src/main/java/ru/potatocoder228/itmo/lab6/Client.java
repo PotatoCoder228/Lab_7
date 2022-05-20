@@ -35,13 +35,19 @@ public class Client {
             ClientConsole clientConsole = new ClientConsole(false);
             while (true){
                 answerMsg = clientConsole.inputCommand();
+                if (answerMsg.getMessage().equals("exit")) {
+                    System.out.println("Завершение работы приложения...");
+                    socketChannel.close();
+                    System.exit(0);
+                }
                 startConnection(host, port);
                 sendMessage(answerMsg);
                 AskMsg msg1 = receiveObject();
                 System.out.println(msg1.getMessage());
             }
         }catch (IOException e) {
-            System.out.println("Ошибка при получении ответа от сервера.");
+            System.out.println("Ошибка при получении ответа от сервера. Возможно, он недоступен.");
+
             run();
             //while (true) {
             //    Scanner scanner = new Scanner(System.in);

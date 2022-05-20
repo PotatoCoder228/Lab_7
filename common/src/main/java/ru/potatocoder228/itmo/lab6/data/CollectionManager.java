@@ -60,6 +60,9 @@ public class CollectionManager {
     public void clear(){
         collection.clear();
     }
+    public void saveCollection(){
+        fileManager.writeObjects(collection);
+    }
     public void setFileManager(FileManager fileManager){
         this.fileManager = fileManager;
     }

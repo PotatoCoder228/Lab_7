@@ -30,9 +30,9 @@ public class Info implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        String status = "\nИнформация о коллекции:"+"\tТип коллекции: LinkedList"+"\tВремя создания коллекции: " ;
+        String status = "\nИнформация о коллекции:"+"\n\tТип коллекции: LinkedList"+"\n\tВремя создания коллекции: " ;
         status += collectionManager.getCreatingTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy"));
-        status+= "\tКоличество элементов в коллекции: "+ collectionManager.getSize();
+        status+= "\n\tКоличество элементов в коллекции: "+ collectionManager.getSize();
         return status;
     }
 

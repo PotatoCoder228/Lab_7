@@ -30,9 +30,10 @@ public class Exit implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        System.out.println("Завершение работы сервера...");
+        String status = "Завершение работы сервера...";
+        System.out.println(status);
         System.exit(0);
-        return nameOfCommand;
+        return status;
     }
 
     public void setArg(String arg) {

@@ -23,6 +23,8 @@ public class Server {
     private CommandManager commandManager;
     private HashMap<String, Command> clientCommands;
     private HashMap<String, Command> serverCommands;
+    private Socket socket;
+    private Sender sender;
     public Server(int port, String path) {
         try {
             this.serverSocket = new ServerSocket(port);
@@ -30,6 +32,7 @@ public class Server {
             serverCommands = loadServerCommands();
             FileManager fileManager = new FileManager(path);
             CollectionManager collectionManager = new CollectionManager(fileManager.parseFile());
+            collectionManager.setFileManager(fileManager);
             commandManager = new CommandManager(collectionManager);
             console = new ServerConsole(serverCommands, commandManager);
         } catch (IOException e) {
@@ -45,10 +48,10 @@ public class Server {
             try {
                 console.parseCommand(serverSocket);
                 serverSocket.setSoTimeout(5);
-                Socket socket = serverSocket.accept();
+                socket = serverSocket.accept();
                 socket.setSoTimeout(1000);
                 System.out.println("\nПолучен запрос от клиента.");
-                Sender sender = new Sender(socket);
+                sender = new Sender(socket);
                 Receiver receiver = new Receiver(socket);
                 commandManager.setMap(clientCommands);
                 //try {
@@ -61,26 +64,34 @@ public class Server {
                 //}
                 boolean work = true;
                 while (work) {
-                    AnswerMsg msg = receiver.receiveCommand();
-                    String command = msg.getMessage();
-                    System.out.println(command);
-                    String[] commandExecuter = command.split("\\s+");
-                    if (commandExecuter.length == 2) {
-                        commandManager.setNewDragon(msg.getDragon());
-                        commandManager.setCollectionInfo(clientInfo);
-                        String clientMessage = commandManager.clientRun(commandExecuter[0], commandExecuter[1], clientCommands);
-                        //System.out.println(clientMessage);
-                        AskMsg mesg = new AskMsg();
-                        mesg.setMessage(clientMessage);
-                        sender.sendMessage(mesg);
-                    } else if (commandExecuter.length == 1) {
-                        String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
-                        System.out.println(clientMessage);//TODO
-                        AskMsg mesg = new AskMsg();
-                        mesg.setMessage(clientMessage);
-                        sender.sendMessage(mesg);
+                    try {
+                        AnswerMsg msg = receiver.receiveCommand();
+                        String command = msg.getMessage();
+                        System.out.println(command);
+                        String[] commandExecuter = command.split("\\s+");
+                        if (commandExecuter.length == 2) {
+                            commandManager.setNewDragon(msg.getDragon());
+                            commandManager.setCollectionInfo(clientInfo);
+                            String clientMessage = commandManager.clientRun(commandExecuter[0], commandExecuter[1], clientCommands);
+                            //System.out.println(clientMessage);
+                            AskMsg mesg = new AskMsg();
+                            mesg.setMessage(clientMessage);
+                            sender.sendMessage(mesg);
+                        } else if (commandExecuter.length == 1) {
+                            commandManager.setCollectionInfo(clientInfo);
+                            String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
+                            System.out.println(clientMessage);//TODO
+                            AskMsg mesg = new AskMsg();
+                            mesg.setMessage(clientMessage);
+                            sender.sendMessage(mesg);
+                        }
+                        System.out.print("Введите команду:");
+                    }catch (NumberFormatException e){
+                        System.out.println("Некорректный аргумент команды.");
+                        AskMsg msg = new AskMsg();
+                        msg.setMessage("Некорректный аргумент команды.");
+                        sender.sendMessage(msg);
                     }
-                    System.out.print("Введите команду:");
                 }
             } catch (IOException ignored) {
                 //
@@ -90,8 +101,11 @@ public class Server {
                 System.out.println("Некорректный ввод, попробуйте снова.");
                 run();
             }catch (NullPointerException e){
-                System.out.println("Некорректная команда.");
-                run();
+                    System.out.println("Некорректная команда.");
+                    AskMsg msg = new AskMsg();
+                    msg.setMessage("Некорректная команда.");
+                    sender.sendMessage(msg);
+                    run();
             }
         }
     }
