@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Server {
@@ -47,7 +46,7 @@ public class Server {
         while (true) {
             try {
                 console.parseCommand(serverSocket);
-                serverSocket.setSoTimeout(5);
+                serverSocket.setSoTimeout(1000);
                 socket = serverSocket.accept();
                 socket.setSoTimeout(1000);
                 System.out.println("\nПолучен запрос от клиента.");
@@ -67,8 +66,7 @@ public class Server {
                     try {
                         AnswerMsg msg = receiver.receiveCommand();
                         String command = msg.getMessage();
-                        System.out.println(command);
-                        String[] commandExecuter = command.split("\\s+");
+                        String[] commandExecuter = command.split("\\s+", 2);
                         if (commandExecuter.length == 2) {
                             commandManager.setNewDragon(msg.getDragon());
                             commandManager.setCollectionInfo(clientInfo);
@@ -79,6 +77,8 @@ public class Server {
                             sender.sendMessage(mesg);
                         } else if (commandExecuter.length == 1) {
                             commandManager.setCollectionInfo(clientInfo);
+                            System.out.println(command);
+                            commandManager.setNewDragon(msg.getDragon());
                             String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
                             System.out.println(clientMessage);//TODO
                             AskMsg mesg = new AskMsg();
@@ -101,6 +101,7 @@ public class Server {
                 System.out.println("Некорректный ввод, попробуйте снова.");
                 run();
             }catch (NullPointerException e){
+                    e.printStackTrace();
                     System.out.println("Некорректная команда.");
                     AskMsg msg = new AskMsg();
                     msg.setMessage("Некорректная команда.");

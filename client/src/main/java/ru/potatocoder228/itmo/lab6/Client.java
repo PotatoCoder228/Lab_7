@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6;
 
 import ru.potatocoder228.itmo.lab6.connection.AnswerMsg;
 import ru.potatocoder228.itmo.lab6.connection.AskMsg;
+import ru.potatocoder228.itmo.lab6.exceptions.RecursiveScriptExecuteException;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -33,7 +34,7 @@ public class Client {
     public void run() {
         try {
             ClientConsole clientConsole = new ClientConsole(false);
-            while (true){
+            while (true) {
                 answerMsg = clientConsole.inputCommand();
                 if (answerMsg.getMessage().equals("exit")) {
                     System.out.println("Завершение работы приложения...");
@@ -45,9 +46,11 @@ public class Client {
                 AskMsg msg1 = receiveObject();
                 System.out.println(msg1.getMessage());
             }
+        }catch (RecursiveScriptExecuteException e){
+            run();
         }catch (IOException e) {
-            System.out.println("Ошибка при получении ответа от сервера. Возможно, он недоступен.");
-
+            e.printStackTrace();
+            System.out.println("Ошибка при получении ответа от сервера. Возможно, он временно недоступен.");
             run();
             //while (true) {
             //    Scanner scanner = new Scanner(System.in);

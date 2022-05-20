@@ -26,7 +26,7 @@ public class ServerConsole {
                     socket.close();
                     System.exit(0);
                 }
-                String[] lines = line.split("\\s+");
+                String[] lines = line.split("\\s+", 2);
                 if (lines.length == 2) {
                     String clientMessage = commandManager.clientRun(lines[0], lines[1], map);
                     System.out.println(clientMessage);

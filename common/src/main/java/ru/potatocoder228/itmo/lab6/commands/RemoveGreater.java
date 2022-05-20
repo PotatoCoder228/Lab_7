@@ -32,7 +32,9 @@ public class RemoveGreater implements Command {
     @Override
     public String execute(CollectionManager collectionManager) {
         String status = "";
-        collectionManager.getCollection().stream().filter(w -> w.getAge() > Integer.parseInt(arg)).forEach(w->collectionManager.getCollection().remove(w));
+        collectionManager.getNewDragon().setCreationDate();
+        collectionManager.getNewDragon().setId();
+        collectionManager.getCollection().stream().filter(w -> w.getAge() > collectionManager.getNewDragon().getAge()).forEach(w->collectionManager.getCollection().remove(w));
         return status;
     }
 

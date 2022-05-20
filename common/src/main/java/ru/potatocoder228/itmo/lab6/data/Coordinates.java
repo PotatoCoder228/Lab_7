@@ -1,11 +1,14 @@
 package ru.potatocoder228.itmo.lab6.data;
 
 
+import java.io.Serializable;
+
 /**
  * Класс, описывающий координаты x и y
  */
 
-public class Coordinates {
+public class Coordinates implements Serializable {
+    private static final long serialVersionUID = 669;
     private final long x;//Максимальное значение поля: 436
     private final Double y;//Максимальное значение поля: 101, Поле не может быть null
 

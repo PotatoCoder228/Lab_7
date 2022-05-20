@@ -2,7 +2,7 @@ package ru.potatocoder228.itmo.lab6.connection;
 
 import ru.potatocoder228.itmo.lab6.data.Dragon;
 
-public class AnswerMsg implements Response {
+public class AnswerMsg implements Response{
     private static final long serialVersionUID = 666;
     private String msg = null;
     private Status status;

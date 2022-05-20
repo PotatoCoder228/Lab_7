@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6.commands;
 
 
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
+import ru.potatocoder228.itmo.lab6.data.Dragon;
 
 import java.util.Map;
 
@@ -32,9 +33,9 @@ public class UpdateId implements Command {
     @Override
     public String execute(CollectionManager collectionManager) {
         String status = "";
-        collectionManager.getCollection().stream()
-                .filter(w->w.getId() == collectionManager.getNewDragon().getId())
-                .forEach(w->collectionManager.getCollection().remove(collectionManager.getNewDragon()));
+        collectionManager.getCollection().removeIf(dragon -> dragon.getId() == Integer.parseInt(arg));
+        collectionManager.getNewDragon().setId();
+        collectionManager.getNewDragon().setCreationDate();
         collectionManager.getCollection().add(collectionManager.getNewDragon());
         status = "Объект успешно обновлён.";
         return status;

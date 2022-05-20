@@ -31,6 +31,8 @@ public class Add implements Command {
     @Override
     public String execute(CollectionManager collectionManager) {
         String status = "";
+        collectionManager.getNewDragon().setCreationDate();
+        collectionManager.getNewDragon().setId();
         int count = (int) collectionManager.getCollection()
                 .stream()
                 .filter(w->w.getId()==collectionManager.getNewDragon().getId()).count();

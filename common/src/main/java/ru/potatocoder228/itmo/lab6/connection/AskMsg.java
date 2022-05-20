@@ -3,7 +3,7 @@ package ru.potatocoder228.itmo.lab6.connection;
 import java.io.Serializable;
 
 public class AskMsg implements Serializable {
-    private static final long serialVersionUID = 666;
+    private static final long serialVersionUID = 667;
     String msg;
     private Status status;
 
