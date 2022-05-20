@@ -1,25 +1,42 @@
 package ru.potatocoder228.itmo.lab6.data;
 
+import ru.potatocoder228.itmo.lab6.commands.Command;
 import ru.potatocoder228.itmo.lab6.file.FileManager;
 
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class CollectionManager {
     private LinkedList<Dragon> collection;
     private LinkedHashSet<Integer> idList = FileManager.idList;
+    private FileManager fileManager;
+    private Dragon newDragon;
+    private LocalDateTime creatingTime = LocalDateTime.now();
+    private HashMap<String, String> map;
 
     public CollectionManager(LinkedList<Dragon> collection) {
         this.collection = collection;
+        Collections.sort(collection);
     }
 
+    public LinkedHashSet<Integer> getIdList(){
+        return this.idList;
+    }
+    public void setDragon(Dragon dragon){
+        this.newDragon = dragon;
+    }
+    public Dragon getNewDragon(){
+        return this.newDragon;
+    }
     public int getSize() {
         return collection.size();
     }
 
     public String getType() {
         return Dragon.class.getName();
+    }
+    public LocalDateTime getCreatingTime(){
+        return this.creatingTime;
     }
 
     public Dragon getFirst() {
@@ -37,21 +54,22 @@ public class CollectionManager {
             return null;
         }
     }
-
-    public Dragon getById(int id) {
-        for (Dragon dragon : collection) {
-            if (dragon.getId() == id) {
-                return dragon;
-            }
-        }
-        return null;
-    }
-
     public void addLast(Dragon dragon) {
-        collection.add(dragon);//TODO id
+        collection.add(dragon);
     }
-
-    public void addById(Dragon dragon, int id) {
-        collection.add(id, dragon);//TODO
+    public void clear(){
+        collection.clear();
+    }
+    public void setFileManager(FileManager fileManager){
+        this.fileManager = fileManager;
+    }
+    public void setInfo(HashMap<String, String> map){
+        this.map = map;
+    }
+    public HashMap<String, String> getInfo(){
+        return this.map;
+    }
+    public LinkedList<Dragon> getCollection(){
+        return this.collection;
     }
 }

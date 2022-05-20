@@ -30,8 +30,20 @@ public class AddIfMax implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        int count = (int) collectionManager.getCollection()
+                .stream()
+                .filter(w->w.getId()==collectionManager.getNewDragon().getId()).count();
+
+        if(count == 0&&collectionManager.getCollection().getLast().getAge()<collectionManager.getNewDragon().getAge()){
+            collectionManager.addLast(collectionManager.getNewDragon());
+            status = "Объект успешно добавлен в коллекцию.";
+        }else if(count > 0){
+            status = "Объект с таким id уже есть в коллекции.";
+        }else{
+            status = "Объект меньше максимального.";
+        }
+        return status;
     }
 
     public void setArg(String arg) {

@@ -30,8 +30,14 @@ public class RemoveFirst implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        if (collectionManager.getSize() > 0){
+            collectionManager.getCollection().removeFirst();
+            status = "Первый элемент коллекции успешно удалён.";
+        }else{
+            status = "Коллекция пуста.";
+        }
+        return status;
     }
 
     public void setArg(String arg) {

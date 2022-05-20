@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6.commands;
 
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -29,8 +30,10 @@ public class Info implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "\nИнформация о коллекции:"+"\tТип коллекции: LinkedList"+"\tВремя создания коллекции: " ;
+        status += collectionManager.getCreatingTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy"));
+        status+= "\tКоличество элементов в коллекции: "+ collectionManager.getSize();
+        return status;
     }
 
     public void setArg(String arg) {

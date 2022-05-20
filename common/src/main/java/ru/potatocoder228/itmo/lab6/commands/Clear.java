@@ -31,8 +31,10 @@ public class Clear implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        collectionManager.clear();
+        status = "Коллекция очищена.";
+        return status;
     }
 
     public void setArg(String arg) {

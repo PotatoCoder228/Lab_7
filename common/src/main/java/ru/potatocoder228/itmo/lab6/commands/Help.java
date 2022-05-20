@@ -3,6 +3,7 @@ package ru.potatocoder228.itmo.lab6.commands;
 
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,8 +32,10 @@ public class Help implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        HashMap<String, String> map = collectionManager.getInfo();
+        status = map.entrySet().toString().replace(",", "\n") ;
+        return " " + status.replace("=", ":").substring(1, status.length() - 1);
     }
 
     public void setArg(String arg) {

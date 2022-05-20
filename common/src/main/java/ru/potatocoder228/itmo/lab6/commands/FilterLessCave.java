@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6.commands;
 
 
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
+import ru.potatocoder228.itmo.lab6.data.Dragon;
 
 import java.util.Map;
 
@@ -30,8 +31,13 @@ public class FilterLessCave implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "Вот все нужные объекты:\n";
+        for(Dragon dragon: collectionManager.getCollection()){
+            if(dragon.getCave() < Integer.parseInt(arg)){
+                status += dragon.toString();
+            }
+        }
+        return status;
     }
 
     public void setArg(String arg) {

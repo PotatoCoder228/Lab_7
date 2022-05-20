@@ -6,7 +6,7 @@ import ru.potatocoder228.itmo.lab6.data.CollectionManager;
 import java.util.Map;
 
 /**
- * Команда, прекращающая выполнение программы
+ * Команда, прекращающая выполнение программы(а зачем ты вообще нужен?)
  */
 
 public class Exit implements Command {

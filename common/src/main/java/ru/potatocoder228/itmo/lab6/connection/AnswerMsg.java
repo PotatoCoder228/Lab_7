@@ -56,4 +56,7 @@ public class AnswerMsg implements Response {
     public void setDragon(Dragon dragon){
         this.dragon = dragon;
     }
+    public Dragon getDragon(){
+        return this.dragon;
+    }
 }

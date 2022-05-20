@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6.commands;
 
 
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
+import ru.potatocoder228.itmo.lab6.data.Dragon;
 
 import java.util.Map;
 
@@ -30,11 +31,19 @@ public class RemoveById implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-        //
-        return nameOfCommand;
+        String status = "";
+        Dragon dragon = collectionManager.getCollection().stream()
+                .filter(w->compareId(w.getId())).findAny().get();
+        collectionManager.getIdList().remove(dragon.getId());
+        collectionManager.getCollection().remove(dragon);
+        status = "Объект успешно удалён из коллекции";
+        return status;
     }
 
     public void setArg(String arg) {
         this.arg = arg;
+    }
+    public boolean compareId(int w){
+        return w==Integer.parseInt(arg);
     }
 }

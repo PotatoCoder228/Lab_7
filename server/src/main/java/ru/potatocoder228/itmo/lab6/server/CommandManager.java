@@ -2,6 +2,7 @@ package ru.potatocoder228.itmo.lab6.server;
 
 import ru.potatocoder228.itmo.lab6.commands.Command;
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
+import ru.potatocoder228.itmo.lab6.data.Dragon;
 
 import java.util.HashMap;
 
@@ -18,10 +19,16 @@ public class CommandManager {
         this.map = map;
     }
 
-    public String run(String com, String arg, HashMap<String, Command> map) {
+    public String clientRun(String com, String arg, HashMap<String, Command> map) {
         Command command = map.get(com);
         command.setArg(arg);
         clientMessage = command.execute(collectionManager);
         return clientMessage;
+    }
+    public void setNewDragon(Dragon dragon){
+        collectionManager.setDragon(dragon);
+    }
+    public void setCollectionInfo(HashMap<String, String> map){
+        this.collectionManager.setInfo(map);
     }
 }

@@ -30,8 +30,17 @@ public class Add implements Command {
 
     @Override
     public String execute(CollectionManager collectionManager) {
-
-        return nameOfCommand;
+        String status = "";
+        int count = (int) collectionManager.getCollection()
+                .stream()
+                .filter(w->w.getId()==collectionManager.getNewDragon().getId()).count();
+        if(count == 0){
+            collectionManager.addLast(collectionManager.getNewDragon());
+            status = "Объект успешно добавлен в коллекцию.";
+        }else {
+            status = "Объект с таким id уже есть в коллекции.";
+        }
+        return status;
     }
 
     public void setArg(String arg) {

@@ -73,11 +73,15 @@ public class Dragon implements Collectionable, Serializable {
     public int getAge() {
         return age;
     }
+    public String getDescription(){
+        return this.description;
+    }
 
     @Override
     public String toString() {
         String strCreationDate = creationDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String s = "";
+        s+="Dragon:\n";
         s += "  \"id\" : " + id + ",\n";
         s += "  \"name\" : " + "\"" + name + "\"" + ",\n";
         s += "  \"coordinates\" : " + coordinates.toString() + ",\n";
@@ -110,6 +114,12 @@ public class Dragon implements Collectionable, Serializable {
                         name != null && !name.equals("") &&
                         creationDate != null
         );
+    }
+    public float getCave(){
+        return this.cave.getDepth();
+    }
+    public Boolean getSpeaking(){
+        return this.speaking;
     }
 
     public static class SortingComparator implements Comparator<Dragon> {
