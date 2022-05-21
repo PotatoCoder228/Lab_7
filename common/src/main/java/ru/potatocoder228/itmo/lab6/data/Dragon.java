@@ -74,7 +74,8 @@ public class Dragon implements Collectionable, Serializable {
     public int getAge() {
         return age;
     }
-    public String getDescription(){
+
+    public String getDescription() {
         return this.description;
     }
 
@@ -82,7 +83,7 @@ public class Dragon implements Collectionable, Serializable {
     public String toString() {
         String strCreationDate = creationDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         String s = "";
-        s+="Dragon:\n";
+        s += "Dragon:\n";
         s += "  \"id\" : " + id + ",\n";
         s += "  \"name\" : " + "\"" + name + "\"" + ",\n";
         s += "  \"coordinates\" : " + coordinates.toString() + ",\n";
@@ -116,11 +117,19 @@ public class Dragon implements Collectionable, Serializable {
                         creationDate != null
         );
     }
-    public float getCave(){
+
+    public float getCave() {
         return this.cave.getDepth();
     }
-    public Boolean getSpeaking(){
+
+    public Boolean getSpeaking() {
         return this.speaking;
+    }
+
+    public String[] getAllFields() {
+        return new String[]{name, id.toString(), String.valueOf(coordinates.getX()),
+                coordinates.getY().toString(), creationDate.format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")), Integer.toString(age), description, speaking.toString(),
+                type.toString(), Float.toString(cave.getDepth())};
     }
 
     public static class SortingComparator implements Comparator<Dragon> {
@@ -132,10 +141,5 @@ public class Dragon implements Collectionable, Serializable {
             }
             return result;
         }
-    }
-    public String[] getAllFields() {
-        return new String[]{name, id.toString(), String.valueOf(coordinates.getX()),
-                coordinates.getY().toString(), creationDate.format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")), Integer.toString(age), description, speaking.toString(),
-                type.toString(), Float.toString(cave.getDepth())};
     }
 }

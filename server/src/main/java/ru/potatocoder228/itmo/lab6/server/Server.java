@@ -7,6 +7,7 @@ import ru.potatocoder228.itmo.lab6.connection.Receiver;
 import ru.potatocoder228.itmo.lab6.connection.Sender;
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
 import ru.potatocoder228.itmo.lab6.file.FileManager;
+import ru.potatocoder228.itmo.lab6.log.Log;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,15 +16,16 @@ import java.util.HashMap;
 import java.util.NoSuchElementException;
 
 public class Server {
-    private ServerSocket serverSocket;
     public HashMap<String, String> clientInfo;
     public HashMap<String, String> serverInfo;
+    private ServerSocket serverSocket;
     private ServerConsole console;
     private CommandManager commandManager;
     private HashMap<String, Command> clientCommands;
     private HashMap<String, Command> serverCommands;
     private Socket socket;
     private Sender sender;
+
     public Server(int port, String path) {
         try {
             this.serverSocket = new ServerSocket(port);
@@ -34,14 +36,15 @@ public class Server {
             collectionManager.setFileManager(fileManager);
             commandManager = new CommandManager(collectionManager);
             console = new ServerConsole(serverCommands, commandManager);
+            Log.logger.trace("Начало работы сервера.");
         } catch (IOException e) {
-            System.out.println("Ошибка подключения. Будет выполнен выход из сервера.");
+            Log.logger.error("Ошибка подключения. Вероятно, этот порт уже занят. Будет выполнен выход из сервера.");
             System.exit(0);
         }
     }
 
     public void run() {
-        System.out.print("Введите команду:");
+        System.out.print("\nВведите команду:");
         //offer:
         while (true) {
             try {
@@ -49,7 +52,6 @@ public class Server {
                 serverSocket.setSoTimeout(1000);
                 socket = serverSocket.accept();
                 socket.setSoTimeout(1000);
-                System.out.println("\nПолучен запрос от клиента.");
                 sender = new Sender(socket);
                 Receiver receiver = new Receiver(socket);
                 commandManager.setMap(clientCommands);
@@ -65,6 +67,7 @@ public class Server {
                 while (work) {
                     try {
                         AnswerMsg msg = receiver.receiveCommand();
+                        Log.logger.trace("Получен запрос от клиента");
                         String command = msg.getMessage();
                         String[] commandExecuter = command.split("\\s+", 2);
                         if (commandExecuter.length == 2) {
@@ -75,18 +78,17 @@ public class Server {
                             AskMsg mesg = new AskMsg();
                             mesg.setMessage(clientMessage);
                             sender.sendMessage(mesg);
+                            Log.logger.trace("Ответ отправлен пользователю.");
                         } else if (commandExecuter.length == 1) {
                             commandManager.setCollectionInfo(clientInfo);
-                            System.out.println(command);
                             commandManager.setNewDragon(msg.getDragon());
                             String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
-                            System.out.println(clientMessage);//TODO
                             AskMsg mesg = new AskMsg();
                             mesg.setMessage(clientMessage);
                             sender.sendMessage(mesg);
                         }
-                        System.out.print("Введите команду:");
-                    }catch (NumberFormatException e){
+                        System.out.print("\nВведите команду:");
+                    } catch (NumberFormatException e) {
                         System.out.println("Некорректный аргумент команды.");
                         AskMsg msg = new AskMsg();
                         msg.setMessage("Некорректный аргумент команды.");
@@ -96,17 +98,17 @@ public class Server {
             } catch (IOException ignored) {
                 //
             } catch (ClassNotFoundException e) {
+                Log.logger.error(e.getMessage());
                 System.out.println("При десериализации не смог найти класс.");
-            }catch (NoSuchElementException e){
+            } catch (NoSuchElementException e) {
                 System.out.println("Некорректный ввод, попробуйте снова.");
                 run();
-            }catch (NullPointerException e){
-                    e.printStackTrace();
-                    System.out.println("Некорректная команда.");
-                    AskMsg msg = new AskMsg();
-                    msg.setMessage("Некорректная команда.");
-                    sender.sendMessage(msg);
-                    run();
+            } catch (NullPointerException e) {
+                Log.logger.error("\n" + e.getMessage());
+                AskMsg msg = new AskMsg();
+                msg.setMessage("Некорректная команда.");
+                sender.sendMessage(msg);
+                run();
             }
         }
     }
@@ -117,13 +119,15 @@ public class Server {
         } catch (IOException ignored) {
         }
     }
-    public HashMap<String, Command> loadServerCommands(){
+
+    public HashMap<String, Command> loadServerCommands() {
         HashMap<String, Command> commands = new HashMap<>();
         serverInfo = new HashMap<>();
         new Save(serverInfo, commands);
         new Exit(serverInfo, commands);
         return commands;
     }
+
     public HashMap<String, Command> loadClientCommands() {
         HashMap<String, Command> commands = new HashMap<>();
         clientInfo = new HashMap<>();

@@ -1,5 +1,7 @@
 package ru.potatocoder228.itmo.lab6.main;
 
+import ru.potatocoder228.itmo.lab6.exceptions.ConnectionException;
+import ru.potatocoder228.itmo.lab6.log.Log;
 import ru.potatocoder228.itmo.lab6.server.Server;
 
 
@@ -7,11 +9,12 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Начало работы сервера.");
         int port;
-        String path = "";
+        String path = null;
         try {
             port = Integer.parseInt(args[0]);
             for (int i = 1; i < args.length; i++) {
                 if (i == 1) {
+                    path = "";
                     path += args[i];
                 } else {
                     path += " " + args[i];
@@ -20,11 +23,13 @@ public class Main {
             Server server = new Server(port, path);
             server.run();
         } catch (NumberFormatException e) {
-            System.out.println("Порт должен быть числом.");
+            Log.logger.error("Порт должен быть числом. Сервер завершает свою работу.");
             System.exit(0);
         } catch (IndexOutOfBoundsException e) {
-            System.out.println("Вы не ввели порт");
+            Log.logger.error("Вы не ввели порт. Сервер завершает свою работу.");
             System.exit(0);
+        } catch (NullPointerException e) {
+            Log.logger.error("Вы не ввели путь к переменной окружения. Сервер завершает свою работу.");
         }
 
 

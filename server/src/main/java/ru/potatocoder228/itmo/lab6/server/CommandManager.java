@@ -25,10 +25,12 @@ public class CommandManager {
         clientMessage = command.execute(collectionManager);
         return clientMessage;
     }
-    public void setNewDragon(Dragon dragon){
+
+    public void setNewDragon(Dragon dragon) {
         collectionManager.setDragon(dragon);
     }
-    public void setCollectionInfo(HashMap<String, String> map){
+
+    public void setCollectionInfo(HashMap<String, String> map) {
         this.collectionManager.setInfo(map);
     }
 }

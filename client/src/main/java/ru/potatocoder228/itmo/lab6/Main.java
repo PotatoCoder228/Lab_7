@@ -1,5 +1,7 @@
 package ru.potatocoder228.itmo.lab6;
 
+import ru.potatocoder228.itmo.lab6.exceptions.ConnectionException;
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("Добро пожаловать в клиентскую версию консольного приложения.");
@@ -15,6 +17,8 @@ public class Main {
             System.out.println("Вы не ввели порт. Работа приложения будет завершена.");
             System.out.println("Завершение работы...");
             System.exit(0);
+        }catch (ConnectionException e){
+            System.out.println("Невозможно подключиться к серверу. Проверьте его и перезапустите приложение.");
         }
     }
 }

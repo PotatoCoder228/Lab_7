@@ -32,8 +32,8 @@ public class FilterGreaterDescription implements Command {
     @Override
     public String execute(CollectionManager collectionManager) {
         String status = "Вот все нужные объекты:\n";
-        for(Dragon dragon: collectionManager.getCollection()){
-            if(dragon.getDescription().length() > Integer.parseInt(arg)){
+        for (Dragon dragon : collectionManager.getCollection()) {
+            if (dragon.getDescription().length() > Integer.parseInt(arg)) {
                 status += dragon.toString();
             }
         }
@@ -43,10 +43,11 @@ public class FilterGreaterDescription implements Command {
     public void setArg(String arg) {
         this.arg = arg;
     }
-    private boolean compareDescription(Dragon dragon){
-        if(dragon.getDescription().length() > Integer.parseInt(arg)){
+
+    private boolean compareDescription(Dragon dragon) {
+        if (dragon.getDescription().length() > Integer.parseInt(arg)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

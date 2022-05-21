@@ -1,6 +1,7 @@
 package ru.potatocoder228.itmo.lab6.server;
 
 import ru.potatocoder228.itmo.lab6.commands.Command;
+import ru.potatocoder228.itmo.lab6.log.Log;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -22,7 +23,8 @@ public class ServerConsole {
             if (System.in.available() > 0) {
                 String line = scanner.nextLine().toLowerCase();
                 if (line.equals("exit")) {
-                    System.out.println("Завершение работы сервера...");
+                    //System.out.println("Завершение работы сервера...");
+                    Log.logger.trace("Завершение работы сервера.");
                     socket.close();
                     System.exit(0);
                 }
@@ -38,8 +40,8 @@ public class ServerConsole {
                 }
                 System.out.print("Введите команду:");
             }
-        } catch (IOException e) {
-            //
+        } catch (IOException | NullPointerException e) {
+            Log.logger.error(e.getMessage());
         }
     }
 }

@@ -1,7 +1,9 @@
 package ru.potatocoder228.itmo.lab6;
 
+import com.sun.org.apache.bcel.internal.generic.FieldGenOrMethodGen;
 import ru.potatocoder228.itmo.lab6.connection.AnswerMsg;
 import ru.potatocoder228.itmo.lab6.connection.AskMsg;
+import ru.potatocoder228.itmo.lab6.exceptions.ConnectionException;
 import ru.potatocoder228.itmo.lab6.exceptions.RecursiveScriptExecuteException;
 
 import java.io.*;
@@ -31,7 +33,7 @@ public class Client {
         }
     }
 
-    public void run() {
+    public void run() throws ConnectionException{
         try {
             ClientConsole clientConsole = new ClientConsole(false);
             while (true) {
@@ -46,9 +48,13 @@ public class Client {
                 AskMsg msg1 = receiveObject();
                 System.out.println(msg1.getMessage());
             }
-        }catch (RecursiveScriptExecuteException e){
+        } catch (RecursiveScriptExecuteException e) {
             run();
-        }catch (IOException e) {
+        }catch (StreamCorruptedException e){
+            System.out.println("Сервер был перезагружен, переподключаемся...");
+            System.out.print("Введите команду:");
+            run();
+        } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Ошибка при получении ответа от сервера. Возможно, он временно недоступен.");
             run();
@@ -68,26 +74,32 @@ public class Client {
         }
     }
 
-    public void startConnection(InetAddress host, int port) throws IOException {
-        selector = Selector.open();
-        socketChannel = SocketChannel.open();
-        socketChannel.configureBlocking(false);
-        socketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
-        socketChannel.connect(new InetSocketAddress(host, port));
-        while (true) {
-            selector.select();
-            Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
-            while (keys.hasNext()) {
-                SelectionKey key = keys.next();
-                keys.remove();
-                if (key.isValid()) {
-                    SocketChannel channel = (SocketChannel) key.channel();
-                    if (channel.isConnectionPending()) {
-                        channel.finishConnect();
+    public void startConnection(InetAddress host, int port) throws ConnectionException {
+        try {
+            selector = Selector.open();
+            socketChannel = SocketChannel.open();
+            socketChannel.socket().setSoTimeout(500);
+            socketChannel.configureBlocking(false);
+            socketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
+            socketChannel.connect(new InetSocketAddress(host, port));
+            while (true) {
+                selector.select();
+                Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
+                while (keys.hasNext()) {
+                    SelectionKey key = keys.next();
+                    keys.remove();
+                    if (key.isValid()) {
+                        SocketChannel channel = (SocketChannel) key.channel();
+                        channel.socket().setSoTimeout(500);
+                        if (channel.isConnectionPending()) {
+                            channel.finishConnect();
+                        }
+                        return;
                     }
-                    return;
                 }
             }
+        }catch (IOException e){
+            throw new ConnectionException("Ошибка при попытке соединения с сервером. Проверьте его и перезапустите приложение.");
         }
     }
 
@@ -114,10 +126,11 @@ public class Client {
         }
     }
 
-    public AskMsg receiveObject() throws IOException {
+    public AskMsg receiveObject() throws IOException, ConnectionException {
         System.out.println("Читаем пришедший ответ...");
+        int count = 0;
         while (true) {
-            selector.select();
+            selector.select(5);
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
                 SelectionKey selectionKey = iterator.next();
@@ -133,8 +146,12 @@ public class Client {
                             try {
                                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(outBuffer.array()));
                                 return (AskMsg) objectInputStream.readObject();
-                            } catch (StreamCorruptedException ignored) {
-                            } catch (ClassNotFoundException e) {
+                            }catch (StreamCorruptedException e){
+                                count += 1;
+                                if (count == 3){
+                                    run();
+                                }
+                            }catch (ClassNotFoundException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -142,7 +159,8 @@ public class Client {
                             throw new IOException();
                         }
                     } catch (IOException e) {
-                        throw e;
+                        e.printStackTrace();
+                        run();
                     }
                 }
                 iterator.remove();

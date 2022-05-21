@@ -35,14 +35,14 @@ public class AddIfMax implements Command {
         collectionManager.getNewDragon().setId();
         int count = (int) collectionManager.getCollection()
                 .stream()
-                .filter(w->w.getId()==collectionManager.getNewDragon().getId()).count();
+                .filter(w -> w.getId() == collectionManager.getNewDragon().getId()).count();
 
-        if(count == 0&&collectionManager.getCollection().getLast().getAge()<collectionManager.getNewDragon().getAge()){
+        if (count == 0 && collectionManager.getCollection().getLast().getAge() < collectionManager.getNewDragon().getAge()) {
             collectionManager.addLast(collectionManager.getNewDragon());
             status = "Объект успешно добавлен в коллекцию.";
-        }else if(count > 0){
+        } else if (count > 0) {
             status = "Объект с таким id уже есть в коллекции.";
-        }else{
+        } else {
             status = "Объект меньше максимального.";
         }
         return status;

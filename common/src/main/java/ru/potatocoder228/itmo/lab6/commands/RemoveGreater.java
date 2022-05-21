@@ -34,7 +34,7 @@ public class RemoveGreater implements Command {
         String status = "";
         collectionManager.getNewDragon().setCreationDate();
         collectionManager.getNewDragon().setId();
-        collectionManager.getCollection().stream().filter(w -> w.getAge() > collectionManager.getNewDragon().getAge()).forEach(w->collectionManager.getCollection().remove(w));
+        collectionManager.getCollection().stream().filter(w -> w.getAge() > collectionManager.getNewDragon().getAge()).forEach(w -> collectionManager.getCollection().remove(w));
         return status;
     }
 

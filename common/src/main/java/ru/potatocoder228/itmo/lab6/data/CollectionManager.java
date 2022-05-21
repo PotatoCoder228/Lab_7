@@ -1,6 +1,5 @@
 package ru.potatocoder228.itmo.lab6.data;
 
-import ru.potatocoder228.itmo.lab6.commands.Command;
 import ru.potatocoder228.itmo.lab6.file.FileManager;
 
 import java.time.LocalDateTime;
@@ -19,15 +18,18 @@ public class CollectionManager {
         Collections.sort(collection);
     }
 
-    public LinkedHashSet<Integer> getIdList(){
+    public LinkedHashSet<Integer> getIdList() {
         return this.idList;
     }
-    public void setDragon(Dragon dragon){
+
+    public void setDragon(Dragon dragon) {
         this.newDragon = dragon;
     }
-    public Dragon getNewDragon(){
+
+    public Dragon getNewDragon() {
         return this.newDragon;
     }
+
     public int getSize() {
         return collection.size();
     }
@@ -35,7 +37,8 @@ public class CollectionManager {
     public String getType() {
         return Dragon.class.getName();
     }
-    public LocalDateTime getCreatingTime(){
+
+    public LocalDateTime getCreatingTime() {
         return this.creatingTime;
     }
 
@@ -54,25 +57,32 @@ public class CollectionManager {
             return null;
         }
     }
+
     public void addLast(Dragon dragon) {
         collection.add(dragon);
     }
-    public void clear(){
+
+    public void clear() {
         collection.clear();
     }
-    public void saveCollection(){
+
+    public void saveCollection() {
         fileManager.writeObjects(collection);
     }
-    public void setFileManager(FileManager fileManager){
+
+    public void setFileManager(FileManager fileManager) {
         this.fileManager = fileManager;
     }
-    public void setInfo(HashMap<String, String> map){
-        this.map = map;
-    }
-    public HashMap<String, String> getInfo(){
+
+    public HashMap<String, String> getInfo() {
         return this.map;
     }
-    public LinkedList<Dragon> getCollection(){
+
+    public void setInfo(HashMap<String, String> map) {
+        this.map = map;
+    }
+
+    public LinkedList<Dragon> getCollection() {
         return this.collection;
     }
 }

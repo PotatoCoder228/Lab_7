@@ -271,7 +271,8 @@ public class FileManager implements ReaderWriter {
         }
         return uncorrectObject;
     }
-    public void writeObjects(LinkedList<Dragon> list){
+
+    public void writeObjects(LinkedList<Dragon> list) {
         try {
             FileOutputStream fos = new FileOutputStream(path);
             BufferedOutputStream bos = new BufferedOutputStream(fos);

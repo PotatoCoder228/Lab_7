@@ -32,8 +32,8 @@ public class FilterLessCave implements Command {
     @Override
     public String execute(CollectionManager collectionManager) {
         String status = "Вот все нужные объекты:\n";
-        for(Dragon dragon: collectionManager.getCollection()){
-            if(dragon.getCave() < Integer.parseInt(arg)){
+        for (Dragon dragon : collectionManager.getCollection()) {
+            if (dragon.getCave() < Integer.parseInt(arg)) {
                 status += dragon.toString();
             }
         }

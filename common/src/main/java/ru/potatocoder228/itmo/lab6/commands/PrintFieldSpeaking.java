@@ -4,7 +4,6 @@ package ru.potatocoder228.itmo.lab6.commands;
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
 import ru.potatocoder228.itmo.lab6.data.Dragon;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
@@ -35,8 +34,8 @@ public class PrintFieldSpeaking implements Command {
     public String execute(CollectionManager collectionManager) {
         String status = "";
         collectionManager.getCollection().sort(Collections.reverseOrder());
-        for(Dragon dragon: collectionManager.getCollection()){
-            status += "\n"+dragon.getSpeaking();
+        for (Dragon dragon : collectionManager.getCollection()) {
+            status += "\n" + dragon.getSpeaking();
         }
         return status;
     }

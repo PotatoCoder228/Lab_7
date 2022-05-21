@@ -34,8 +34,7 @@ public class Help implements Command {
     public String execute(CollectionManager collectionManager) {
         String status = "";
         HashMap<String, String> map = collectionManager.getInfo();
-        System.out.println(collectionManager.getInfo().size());
-        status = map.entrySet().toString().replace(",", "\n") ;
+        status = map.entrySet().toString().replace(",", "\n");
         return " " + status.replace("=", ":").substring(1, status.length() - 1);
     }
 

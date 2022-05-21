@@ -33,9 +33,9 @@ public class Show implements Command {
     @Override
     public String execute(CollectionManager collectionManager) {
         String status = "Вот все объекты коллекции:\n";
-        for(Dragon dragon: collectionManager.getCollection()){
-                status += dragon.toString();
-            }
+        for (Dragon dragon : collectionManager.getCollection()) {
+            status += dragon.toString();
+        }
         return status;
     }
 

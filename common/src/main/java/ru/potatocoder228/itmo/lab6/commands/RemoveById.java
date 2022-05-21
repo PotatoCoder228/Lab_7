@@ -33,7 +33,7 @@ public class RemoveById implements Command {
     public String execute(CollectionManager collectionManager) {
         String status = "";
         Dragon dragon = collectionManager.getCollection().stream()
-                .filter(w->compareId(w.getId())).findAny().get();
+                .filter(w -> compareId(w.getId())).findAny().get();
         collectionManager.getIdList().remove(dragon.getId());
         collectionManager.getCollection().remove(dragon);
         status = "Объект успешно удалён из коллекции";
@@ -43,7 +43,8 @@ public class RemoveById implements Command {
     public void setArg(String arg) {
         this.arg = arg;
     }
-    public boolean compareId(int w){
-        return w==Integer.parseInt(arg);
+
+    public boolean compareId(int w) {
+        return w == Integer.parseInt(arg);
     }
 }
