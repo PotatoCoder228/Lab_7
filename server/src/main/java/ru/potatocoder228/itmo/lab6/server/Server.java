@@ -1,11 +1,14 @@
 package ru.potatocoder228.itmo.lab6.server;
 
+import com.sun.security.ntlm.Client;
+import com.sun.security.ntlm.NTLMException;
 import ru.potatocoder228.itmo.lab6.commands.*;
 import ru.potatocoder228.itmo.lab6.connection.AnswerMsg;
 import ru.potatocoder228.itmo.lab6.connection.AskMsg;
 import ru.potatocoder228.itmo.lab6.connection.Receiver;
 import ru.potatocoder228.itmo.lab6.connection.Sender;
 import ru.potatocoder228.itmo.lab6.data.CollectionManager;
+import ru.potatocoder228.itmo.lab6.exceptions.ConnectionException;
 import ru.potatocoder228.itmo.lab6.file.FileManager;
 import ru.potatocoder228.itmo.lab6.log.Log;
 

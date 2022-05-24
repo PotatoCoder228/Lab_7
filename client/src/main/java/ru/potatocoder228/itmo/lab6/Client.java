@@ -15,6 +15,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 public class Client {
     private SocketChannel socketChannel;
@@ -31,6 +33,9 @@ public class Client {
         } catch (UnknownHostException e) {
             System.out.println(e.getMessage());
         }
+    }
+    public Client(){
+
     }
 
     public void run() throws ConnectionException{
@@ -55,7 +60,6 @@ public class Client {
             System.out.print("Введите команду:");
             run();
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println("Ошибка при получении ответа от сервера. Возможно, он временно недоступен.");
             run();
             //while (true) {
@@ -73,12 +77,33 @@ public class Client {
             //}
         }
     }
+    public void start(String[] args) {
+        try {
+            int port = Integer.parseInt(args[0]);
+            Client client = new Client(port);
+            client.run();
+        } catch (NumberFormatException e) {
+            System.out.println("Порт должен быть числом. Работа приложения будет завершена.");
+            System.out.println("Завершение работы...");
+            System.exit(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Вы не ввели порт. Работа приложения будет завершена.");
+            System.out.println("Завершение работы...");
+            System.exit(0);
+        }catch (ConnectionException e){
+            System.out.println("Неудачная попытка подключиться к серверу.");
+            System.out.println("Хотите переподключиться, если нет - введите exit");
+            getConsole(args);
+        }catch (IllegalArgumentException e){
+            System.out.println("Некорректное значение порта. Работа приложения будет завершена.");
+            System.exit(0);
+        }
+    }
 
     public void startConnection(InetAddress host, int port) throws ConnectionException {
         try {
             selector = Selector.open();
             socketChannel = SocketChannel.open();
-            socketChannel.socket().setSoTimeout(500);
             socketChannel.configureBlocking(false);
             socketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
             socketChannel.connect(new InetSocketAddress(host, port));
@@ -90,7 +115,6 @@ public class Client {
                     keys.remove();
                     if (key.isValid()) {
                         SocketChannel channel = (SocketChannel) key.channel();
-                        channel.socket().setSoTimeout(500);
                         if (channel.isConnectionPending()) {
                             channel.finishConnect();
                         }
@@ -130,7 +154,7 @@ public class Client {
         System.out.println("Читаем пришедший ответ...");
         int count = 0;
         while (true) {
-            selector.select(5);
+            selector.select();
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
                 SelectionKey selectionKey = iterator.next();
@@ -149,6 +173,7 @@ public class Client {
                             }catch (StreamCorruptedException e){
                                 count += 1;
                                 if (count == 3){
+                                    System.out.println("Некорректный ответ от сервера.");
                                     run();
                                 }
                             }catch (ClassNotFoundException e) {
@@ -159,12 +184,25 @@ public class Client {
                             throw new IOException();
                         }
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        System.out.println("Некорректный ответ от сервера. При повторных ошибках стоит перезапустить его.");
                         run();
                     }
                 }
                 iterator.remove();
             }
+        }
+    }
+    public void getConsole(String[] args){
+        try{
+            Scanner scanner = new Scanner(System.in);
+            if(scanner.nextLine().equals("exit")){
+                System.exit(0);
+            }else{
+                start(args);
+            }
+        }catch(NoSuchElementException ex){
+            System.out.println("Некорректный ввод. Повторите ввод снова:");
+            getConsole(args);
         }
     }
 }

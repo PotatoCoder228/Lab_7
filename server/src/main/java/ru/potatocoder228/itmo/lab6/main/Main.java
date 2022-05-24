@@ -30,6 +30,8 @@ public class Main {
             System.exit(0);
         } catch (NullPointerException e) {
             Log.logger.error("Вы не ввели путь к переменной окружения. Сервер завершает свою работу.");
+        } catch (IllegalArgumentException e){
+            Log.logger.error("Некорректное значение порта. Работа сервера будет завершена...");
         }
 
 
