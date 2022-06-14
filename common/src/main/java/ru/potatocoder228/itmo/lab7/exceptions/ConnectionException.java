@@ -5,7 +5,8 @@ public class ConnectionException extends Exception {
         super(s);
         System.out.println(s);
     }
-    public ConnectionException(){
+
+    public ConnectionException() {
         super();
     }
 }

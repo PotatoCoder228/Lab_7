@@ -45,6 +45,7 @@ public class FilterLessCave implements Command {
     public void setArg(String arg) {
         this.arg = arg;
     }
+
     private boolean compareCave(Dragon dragon) {
         return dragon.getCave() < Integer.parseInt(arg);
     }

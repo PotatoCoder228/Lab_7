@@ -1,12 +1,11 @@
 package ru.potatocoder228.itmo.lab7.main;
 
-import ru.potatocoder228.itmo.lab7.exceptions.InvalidPortException;
 import ru.potatocoder228.itmo.lab7.log.Log;
 import ru.potatocoder228.itmo.lab7.server.Server;
 
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println("Начало работы сервера.");
         int port;
         StringBuilder path = new StringBuilder();
@@ -30,7 +29,7 @@ public class Main {
         } catch (NullPointerException e) {
             Log.logger.error("Вы не ввели путь к переменной окружения. Сервер завершает свою работу.");
             Thread.currentThread().interrupt();
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             Log.logger.error("Некорректное значение порта. Работа сервера будет завершена...");
             Thread.currentThread().interrupt();
         }

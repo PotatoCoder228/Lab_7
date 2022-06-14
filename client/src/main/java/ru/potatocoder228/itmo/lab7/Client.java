@@ -32,10 +32,11 @@ public class Client {
             System.out.println(e.getMessage());
         }
     }
-    public Client(){
+
+    public Client() {
     }
 
-    public void run() throws ConnectionException{
+    public void run() throws ConnectionException {
         try {
             ClientConsole clientConsole = new ClientConsole(false);
             while (true) {
@@ -43,7 +44,7 @@ public class Client {
                 if (answerMsg.getMessage().equals("exit")) {
                     System.out.println("Завершение работы приложения...");
                     socketChannel.close();
-                    Thread.currentThread().interrupt();
+                    System.exit(0);
                 }
                 startConnection(host, port);
                 sendMessage(answerMsg);
@@ -52,7 +53,7 @@ public class Client {
             }
         } catch (RecursiveScriptExecuteException e) {
             run();
-        }catch (StreamCorruptedException e){
+        } catch (StreamCorruptedException e) {
             System.out.println("Сервер был перезагружен, переподключаемся...");
             System.out.print("Введите команду:");
             run();
@@ -61,6 +62,7 @@ public class Client {
             run();
         }
     }
+
     public void start(String[] args) {
         try {
             int port = Integer.parseInt(args[0]);
@@ -74,11 +76,11 @@ public class Client {
             System.out.println("Вы не ввели порт. Работа приложения будет завершена.");
             System.out.println("Завершение работы...");
             Thread.currentThread().interrupt();
-        }catch (ConnectionException e){
+        } catch (ConnectionException e) {
             System.out.println("Неудачная попытка подключиться к серверу.");
             System.out.println("Хотите переподключиться, если нет - введите exit");
             getConsole(args);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             System.out.println("Некорректное значение порта. Работа приложения будет завершена.");
             Thread.currentThread().interrupt();
         }
@@ -106,7 +108,7 @@ public class Client {
                     }
                 }
             }
-        }catch (IOException e){
+        } catch (IOException e) {
             throw new ConnectionException("Ошибка при попытке соединения с сервером. Проверьте его и перезапустите приложение.");
         }
     }
@@ -154,13 +156,13 @@ public class Client {
                             try {
                                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(outBuffer.array()));
                                 return (AskMsg) objectInputStream.readObject();
-                            }catch (StreamCorruptedException e){
+                            } catch (StreamCorruptedException e) {
                                 count += 1;
-                                if (count == 3){
+                                if (count == 3) {
                                     System.out.println("Некорректный ответ от сервера.");
                                     run();
                                 }
-                            }catch (ClassNotFoundException e) {
+                            } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -176,15 +178,16 @@ public class Client {
             }
         }
     }
-    public void getConsole(String[] args){
-        try{
+
+    public void getConsole(String[] args) {
+        try {
             Scanner scanner = new Scanner(System.in);
-            if(scanner.nextLine().equals("exit")){
+            if (scanner.nextLine().equals("exit")) {
                 Thread.currentThread().interrupt();
-            }else{
+            } else {
                 start(args);
             }
-        }catch(NoSuchElementException ex){
+        } catch (NoSuchElementException ex) {
             System.out.println("Некорректный ввод. Повторите ввод снова:");
             getConsole(args);
         }

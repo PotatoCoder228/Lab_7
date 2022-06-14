@@ -65,6 +65,7 @@ public class Server {
                             commandManager.setNewDragon(msg.getDragon());
                             commandManager.setCollectionInfo(clientInfo);
                             String clientMessage = commandManager.clientRun(commandExecuter[0], commandExecuter[1], clientCommands);
+                            Log.logger.trace("Команда: "+ command);
                             AskMsg mesg = new AskMsg();
                             mesg.setMessage(clientMessage);
                             sender.sendMessage(mesg);
@@ -73,9 +74,11 @@ public class Server {
                             commandManager.setCollectionInfo(clientInfo);
                             commandManager.setNewDragon(msg.getDragon());
                             String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
+                            Log.logger.trace("Команда: "+ command);
                             AskMsg mesg = new AskMsg();
                             mesg.setMessage(clientMessage);
                             sender.sendMessage(mesg);
+                            Log.logger.trace("Ответ отправлен пользователю.");
                         }
                         System.out.print("\nВведите команду:");
                     } catch (NumberFormatException e) {
@@ -94,7 +97,7 @@ public class Server {
                 System.out.println("Некорректный ввод, попробуйте снова.");
                 run();
             } catch (NullPointerException e) {
-                Log.logger.error("\n" + e.getMessage());
+                Log.logger.error("\nНекорректная команда.");
                 AskMsg msg = new AskMsg();
                 msg.setMessage("Некорректная команда.");
                 sender.sendMessage(msg);

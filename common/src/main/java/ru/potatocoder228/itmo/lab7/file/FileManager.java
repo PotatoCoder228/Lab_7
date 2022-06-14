@@ -178,7 +178,6 @@ public class FileManager implements ReaderWriter {
             if (!file.exists()) {
                 create(file);
             }
-            ;
             if (!file.canWrite()) throw new FileWrongPermissionsException("Запись в файл невозможна");
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
             writer.write(str);
@@ -295,7 +294,7 @@ public class FileManager implements ReaderWriter {
                 string.append("\n\t\t<cave>").append(fields[9]).append("</cave>");
                 string.append("\n\t</Dragon>");
             }
-            text+= string.toString();
+            text += string.toString();
             text += "\n</Dragons>";
             byte[] buffer = text.getBytes();
             bos.write(buffer, 0, buffer.length);

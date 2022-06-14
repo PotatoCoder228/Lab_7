@@ -38,7 +38,7 @@ public class Show implements Command {
             string.append(dragon.toString());
         }
         status += string.toString();
-        if(string.length() == 0){
+        if (string.length() == 0) {
             status = "Коллекция пуста.";
         }
         return status;

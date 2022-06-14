@@ -54,6 +54,7 @@ public class Dragon implements Collectionable, Serializable {
     public void setCreationDate() {
         creationDate = LocalDateTime.now();
     }
+
     public void setCreationDate(LocalDateTime date) {
         creationDate = date;
     }
@@ -65,6 +66,7 @@ public class Dragon implements Collectionable, Serializable {
     public void setId() {
         id = this.hashCode();
     }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -124,9 +126,11 @@ public class Dragon implements Collectionable, Serializable {
                         creationDate != null
         );
     }
-    public DragonType getType(){
+
+    public DragonType getType() {
         return this.type;
     }
+
     public float getCave() {
         return this.cave.getDepth();
     }
