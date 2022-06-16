@@ -44,13 +44,12 @@ public class Server {
     }
 
     public void run() {
-        System.out.print("\nВведите команду:");
+        console.setServerSocket(serverSocket);
+        console.start();
         while (true) {
             try {
-                console.parseCommand(serverSocket);
-                serverSocket.setSoTimeout(1000);
                 socket = serverSocket.accept();
-                socket.setSoTimeout(1000);
+                socket.setSoTimeout(5000);
                 sender = new Sender(socket);
                 Receiver receiver = new Receiver(socket);
                 commandManager.setMap(clientCommands);
@@ -58,6 +57,7 @@ public class Server {
                 while (work) {
                     try {
                         AnswerMsg msg = receiver.receiveCommand();
+                        System.out.println("\n");
                         Log.logger.trace("Получен запрос от клиента");
                         String command = msg.getMessage();
                         String[] commandExecuter = command.split("\\s+", 2);
@@ -95,12 +95,14 @@ public class Server {
                 System.out.println("При десериализации не смог найти класс.");
             } catch (NoSuchElementException e) {
                 System.out.println("Некорректный ввод, попробуйте снова.");
+                console.interrupt();
                 run();
             } catch (NullPointerException e) {
                 Log.logger.error("\nНекорректная команда.");
                 AskMsg msg = new AskMsg();
                 msg.setMessage("Некорректная команда.");
                 sender.sendMessage(msg);
+                console.interrupt();
                 run();
             }
         }

@@ -8,39 +8,38 @@ import java.net.ServerSocket;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class ServerConsole {
+public class ServerConsole extends Thread{
     HashMap<String, Command> map;
     CommandManager commandManager;
+    ServerSocket serverSocket;
 
     public ServerConsole(HashMap<String, Command> map, CommandManager commandManager) {
         this.map = map;
         this.commandManager = commandManager;
     }
 
-    public void parseCommand(ServerSocket socket) {
-        try {
-            Scanner scanner = new Scanner(System.in);
-            if (System.in.available() > 0) {
-                String line = scanner.nextLine().toLowerCase();
+    public void run() {
+        Scanner scanner = new Scanner(System.in);
+        while(true) {
+            try {
+                System.out.print("Введите команду:");
+                String line = scanner.nextLine();
                 if (line.equals("exit")) {
                     Log.logger.trace("Завершение работы сервера.");
-                    socket.close();
+                    serverSocket.close();
                     System.exit(0);
-                }
-                String[] lines = line.split("\\s+", 2);
-                if (lines.length == 2) {
-                    String clientMessage = commandManager.clientRun(lines[0], lines[1], map);
-                    System.out.println(clientMessage);
-                } else if (lines.length == 1) {
-                    String clientMessage = commandManager.clientRun(lines[0], "", map);
-                    System.out.println(clientMessage);
+                } else if (line.equals("save")) {
+                    String clientMessage = commandManager.clientRun(line, "", map);
+                    Log.logger.trace(clientMessage);
                 } else {
-                    System.out.println("Некорректная команда.");
+                    Log.logger.trace("Некорректная команда.");
                 }
-                System.out.print("Введите команду:");
+            } catch (IOException | NullPointerException e) {
+                Log.logger.error(e.getMessage());
             }
-        } catch (IOException | NullPointerException e) {
-            Log.logger.error(e.getMessage());
         }
+    }
+    public void setServerSocket(ServerSocket socket){
+        this.serverSocket = socket;
     }
 }
