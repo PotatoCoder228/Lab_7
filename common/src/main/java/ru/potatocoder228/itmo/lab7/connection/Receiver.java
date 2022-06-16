@@ -5,12 +5,15 @@ import ru.potatocoder228.itmo.lab7.log.Log;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Receiver implements Runnable{
     private final Socket socket;
     private volatile Ask ask;
-    private ConcurrentLinkedQueue<Ask> queue = new ConcurrentLinkedQueue<>();
+    private BlockingQueue<Ask> queue = new LinkedBlockingQueue<>();
 
     public Receiver(Socket socket) throws IOException {
         this.socket = socket;
@@ -28,7 +31,7 @@ public class Receiver implements Runnable{
             Log.logger.error("Некорректный запрос от клиента...");
         }
     }
-    public synchronized ConcurrentLinkedQueue<Ask> getAskQueue(){
+    public synchronized BlockingQueue<Ask> getAskQueue(){
         return this.queue;
     }
 }

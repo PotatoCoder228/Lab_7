@@ -10,6 +10,7 @@ import ru.potatocoder228.itmo.lab7.exceptions.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ClientConsole {
@@ -24,50 +25,54 @@ public class ClientConsole {
     }
 
     public Ask inputCommand() throws FileNotFoundException, RecursiveScriptExecuteException {
-        System.out.print("Введите команду:");
-        if (!scriptMode) {
-            scanner = new Scanner(System.in);
-        }
-        String command = scanner.nextLine().toLowerCase();
         Ask msg = new Ask();
-        String[] lines = command.split("\\s+", 2);
-        if (lines.length == 2 && (lines[0].equals("filter_less_than_cave") || lines[0].equals("remove_by_id") || lines[0].equals("filter_greater_than_description"))) {
-            msg.setMessage(command);
-        } else if (lines.length == 1 && !lines[0].equals("add") && !lines[0].equals("add_if_max") && !lines[0].equals("remove_greater")) {
-            msg.setMessage(command);
-        } else if (lines.length == 2 && lines[0].equals("update")) {
-            msg.setMessage(command);
-            Dragon dragon = inputDragon();
-            msg.setDragon(dragon);
-        } else if (lines.length == 1) {
-            Dragon dragon = inputDragon();
-            msg.setDragon(dragon);
-            msg.setMessage(command);
-        } else if (lines.length == 2 && lines[0].equals("execute_script")) {
+        try {
+            System.out.print("Введите команду:");
             if (!scriptMode) {
-                scriptMode = true;
-                this.scanner = new Scanner(new File(lines[1]));
-                scanners.add(this.scanner);
-                namesOfScripts.add(lines[1]);
-            } else {
-                for (String i : namesOfScripts) {
-                    if (lines[1].equals(i)) {
-                        recursive = true;
-                        break;
-                    }
-                }
-                if (!recursive) {
+                scanner = new Scanner(System.in);
+            }
+            String command = scanner.nextLine().toLowerCase();
+            String[] lines = command.split("\\s+", 2);
+            if (lines.length == 2 && (lines[0].equals("filter_less_than_cave") || lines[0].equals("remove_by_id") || lines[0].equals("filter_greater_than_description"))) {
+                msg.setMessage(command);
+            } else if (lines.length == 1 && !lines[0].equals("add") && !lines[0].equals("add_if_max") && !lines[0].equals("remove_greater")) {
+                msg.setMessage(command);
+            } else if (lines.length == 2 && lines[0].equals("update")) {
+                msg.setMessage(command);
+                Dragon dragon = inputDragon();
+                msg.setDragon(dragon);
+            } else if (lines.length == 1) {
+                Dragon dragon = inputDragon();
+                msg.setDragon(dragon);
+                msg.setMessage(command);
+            } else if (lines.length == 2 && lines[0].equals("execute_script")) {
+                if (!scriptMode) {
+                    scriptMode = true;
                     this.scanner = new Scanner(new File(lines[1]));
                     scanners.add(this.scanner);
                     namesOfScripts.add(lines[1]);
                 } else {
-                    namesOfScripts.clear();
-                    scanners.clear();
-                    recursive = false;
-                    throw new RecursiveScriptExecuteException();
+                    for (String i : namesOfScripts) {
+                        if (lines[1].equals(i)) {
+                            recursive = true;
+                            break;
+                        }
+                    }
+                    if (!recursive) {
+                        this.scanner = new Scanner(new File(lines[1]));
+                        scanners.add(this.scanner);
+                        namesOfScripts.add(lines[1]);
+                    } else {
+                        namesOfScripts.clear();
+                        scanners.clear();
+                        recursive = false;
+                        throw new RecursiveScriptExecuteException();
+                    }
                 }
+                msg.setMessage(this.scanner.nextLine());
             }
-            msg.setMessage(this.scanner.nextLine());
+        }catch (NoSuchElementException e){
+            msg.setMessage("Uncorrect command");
         }
         return msg;
     }

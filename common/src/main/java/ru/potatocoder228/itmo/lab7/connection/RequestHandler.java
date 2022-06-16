@@ -1,11 +1,14 @@
 package ru.potatocoder228.itmo.lab7.connection;
 
+import jdk.nashorn.internal.ir.Block;
 import ru.potatocoder228.itmo.lab7.commands.Command;
 import ru.potatocoder228.itmo.lab7.commands.CommandManager;
 import ru.potatocoder228.itmo.lab7.log.Log;
 
 import java.util.HashMap;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class RequestHandler extends Thread{
     private volatile Ask ask;
@@ -17,7 +20,7 @@ public class RequestHandler extends Thread{
 
     private CommandManager commandManager;
 
-    private ConcurrentLinkedQueue<Answer> queue = new ConcurrentLinkedQueue<>();
+    private BlockingQueue<Answer> queue = new LinkedBlockingQueue<>();
 
     public RequestHandler(CommandManager commandManager, HashMap<String, String> clientInfo, HashMap<String, Command> clientCommands){
         this.commandManager = commandManager;
@@ -64,7 +67,7 @@ public class RequestHandler extends Thread{
     public void setReceiver(Receiver receiver){
         this.receiver = receiver;
     }
-    public ConcurrentLinkedQueue<Answer> getQueue(){
+    public BlockingQueue<Answer> getQueue(){
         return this.queue;
     }
 }

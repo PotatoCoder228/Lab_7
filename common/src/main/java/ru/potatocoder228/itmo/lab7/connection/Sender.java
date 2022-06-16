@@ -7,14 +7,16 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Sender implements Runnable{
     private Socket socket;
     private volatile Answer answer;
     private InetSocketAddress address;
     private RequestHandler requestHandler;
-    private ConcurrentLinkedQueue<Answer> queue = new ConcurrentLinkedQueue<>();
+    private BlockingQueue<Answer> queue = new LinkedBlockingQueue<>();
 
     public Sender(Socket socket, RequestHandler requestHandler) {
         this.socket = socket;
