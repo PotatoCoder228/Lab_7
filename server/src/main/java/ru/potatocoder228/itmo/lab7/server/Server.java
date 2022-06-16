@@ -1,10 +1,7 @@
 package ru.potatocoder228.itmo.lab7.server;
 
 import ru.potatocoder228.itmo.lab7.commands.*;
-import ru.potatocoder228.itmo.lab7.connection.AnswerMsg;
-import ru.potatocoder228.itmo.lab7.connection.AskMsg;
-import ru.potatocoder228.itmo.lab7.connection.Receiver;
-import ru.potatocoder228.itmo.lab7.connection.Sender;
+import ru.potatocoder228.itmo.lab7.connection.*;
 import ru.potatocoder228.itmo.lab7.data.CollectionManager;
 import ru.potatocoder228.itmo.lab7.file.FileManager;
 import ru.potatocoder228.itmo.lab7.log.Log;
@@ -13,18 +10,27 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     public HashMap<String, String> clientInfo;
     public HashMap<String, String> serverInfo;
-    private ServerSocket serverSocket;
-    private ServerConsole console;
-    private CommandManager commandManager;
     private HashMap<String, Command> clientCommands;
     private HashMap<String, Command> serverCommands;
+
     private Socket socket;
+    private ServerSocket serverSocket;
+
+    private ServerConsole console;
+    private CommandManager commandManager;
+
     private Sender sender;
+    private Receiver receiver;
+    private RequestHandler requestHandler;
+
+    private ExecutorService request;
+    private ExecutorService response;
 
     public Server(int port, String path) {
         try {
@@ -36,6 +42,10 @@ public class Server {
             collectionManager.setFileManager(fileManager);
             commandManager = new CommandManager(collectionManager);
             console = new ServerConsole(serverCommands, commandManager);
+
+            request = Executors.newCachedThreadPool();
+            response = Executors.newCachedThreadPool();
+
             Log.logger.trace("Начало работы сервера.");
         } catch (IOException e) {
             Log.logger.error("Ошибка подключения. Вероятно, этот порт уже занят. Будет выполнен выход из сервера.");
@@ -48,62 +58,19 @@ public class Server {
         console.start();
         while (true) {
             try {
-                socket = serverSocket.accept();
-                socket.setSoTimeout(5000);
-                sender = new Sender(socket);
-                Receiver receiver = new Receiver(socket);
-                commandManager.setMap(clientCommands);
-                boolean work = true;
-                while (work) {
-                    try {
-                        AnswerMsg msg = receiver.receiveCommand();
-                        System.out.println("\n");
-                        Log.logger.trace("Получен запрос от клиента");
-                        String command = msg.getMessage();
-                        String[] commandExecuter = command.split("\\s+", 2);
-                        if (commandExecuter.length == 2) {
-                            commandManager.setNewDragon(msg.getDragon());
-                            commandManager.setCollectionInfo(clientInfo);
-                            String clientMessage = commandManager.clientRun(commandExecuter[0], commandExecuter[1], clientCommands);
-                            Log.logger.trace("Команда: "+ command);
-                            AskMsg mesg = new AskMsg();
-                            mesg.setMessage(clientMessage);
-                            sender.sendMessage(mesg);
-                            Log.logger.trace("Ответ отправлен пользователю.");
-                        } else if (commandExecuter.length == 1) {
-                            commandManager.setCollectionInfo(clientInfo);
-                            commandManager.setNewDragon(msg.getDragon());
-                            String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
-                            Log.logger.trace("Команда: "+ command);
-                            AskMsg mesg = new AskMsg();
-                            mesg.setMessage(clientMessage);
-                            sender.sendMessage(mesg);
-                            Log.logger.trace("Ответ отправлен пользователю.");
-                        }
-                        System.out.print("\nВведите команду:");
-                    } catch (NumberFormatException e) {
-                        System.out.println("Некорректный аргумент команды.");
-                        AskMsg msg = new AskMsg();
-                        msg.setMessage("Некорректный аргумент команды.");
-                        sender.sendMessage(msg);
-                    }
+                synchronized (this) {
+                    serverSocket.setSoTimeout(1000);
+                    socket = serverSocket.accept();
+                    receiver = new Receiver(socket);
+                    requestHandler = new RequestHandler(commandManager, clientInfo, clientCommands);
+                    sender = new Sender(socket, requestHandler);
+                    request.submit(receiver);
+                    requestHandler.setReceiver(receiver);
+                    requestHandler.start();
+                    response.submit(sender);
                 }
             } catch (IOException ignored) {
                 //
-            } catch (ClassNotFoundException e) {
-                Log.logger.error(e.getMessage());
-                System.out.println("При десериализации не смог найти класс.");
-            } catch (NoSuchElementException e) {
-                System.out.println("Некорректный ввод, попробуйте снова.");
-                console.interrupt();
-                run();
-            } catch (NullPointerException e) {
-                Log.logger.error("\nНекорректная команда.");
-                AskMsg msg = new AskMsg();
-                msg.setMessage("Некорректная команда.");
-                sender.sendMessage(msg);
-                console.interrupt();
-                run();
             }
         }
     }

@@ -2,16 +2,16 @@ package ru.potatocoder228.itmo.lab7.connection;
 
 import java.io.Serializable;
 
-public class AskMsg implements Serializable {
+public class Answer implements Serializable {
     private static final long serialVersionUID = 667;
     String msg;
 
-    public AskMsg clear() {
+    public Answer clear() {
         msg = "";
         return this;
     }
 
-    public AskMsg info(Object str) {
+    public Answer info(Object str) {
         msg = str.toString();
         return this;
     }

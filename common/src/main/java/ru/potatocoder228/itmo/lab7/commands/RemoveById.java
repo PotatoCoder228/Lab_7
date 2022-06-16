@@ -32,16 +32,20 @@ public class RemoveById implements Command {
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
-        boolean exists = collectionManager.getCollection().stream()
-                .filter(w -> compareId(w.getId())).findAny().isPresent();
-        if(exists){
-            Dragon dragon = collectionManager.getCollection().stream()
-                    .filter(w -> compareId(w.getId())).findAny().get();
-            collectionManager.getIdList().remove(dragon.getId());
-            collectionManager.getCollection().remove(dragon);
-            status = "Объект успешно удалён из коллекции";
-        }else{
-            status = "Объекта с таким id не существует...";
+        try {
+            boolean exists = collectionManager.getCollection().stream()
+                    .filter(w -> compareId(w.getId())).findAny().isPresent();
+            if (exists) {
+                Dragon dragon = collectionManager.getCollection().stream()
+                        .filter(w -> compareId(w.getId())).findAny().get();
+                collectionManager.getIdList().remove(dragon.getId());
+                collectionManager.getCollection().remove(dragon);
+                status = "Объект успешно удалён из коллекции";
+            } else {
+                status = "Объекта с таким id не существует...";
+            }
+        }catch (NumberFormatException e){
+            status = "Некорректный аргумент команды.";
         }
         return status;
     }

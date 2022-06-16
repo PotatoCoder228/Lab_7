@@ -2,21 +2,21 @@ package ru.potatocoder228.itmo.lab7.connection;
 
 import ru.potatocoder228.itmo.lab7.data.Dragon;
 
-public class AnswerMsg implements Response {
+public class Ask implements Request {
     private static final long serialVersionUID = 666;
     private String msg;
     private Dragon dragon;
 
-    public AnswerMsg() {
+    public Ask() {
         msg = "";
     }
 
-    public AnswerMsg clear() {
+    public Ask clear() {
         msg = "";
         return this;
     }
 
-    public AnswerMsg info(Object str) {
+    public Ask info(Object str) {
         msg = str.toString();
         return this;
     }

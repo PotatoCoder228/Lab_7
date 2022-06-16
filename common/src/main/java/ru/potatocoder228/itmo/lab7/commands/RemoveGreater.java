@@ -6,7 +6,7 @@ import ru.potatocoder228.itmo.lab7.data.CollectionManager;
 import java.util.Map;
 
 /**
- * Команда, удаляющая первый элемент в коллекции
+ * Команда, удаляющая что-то там...
  */
 
 public class RemoveGreater implements Command {

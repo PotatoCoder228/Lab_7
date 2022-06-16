@@ -1,6 +1,6 @@
 package ru.potatocoder228.itmo.lab7;
 
-import ru.potatocoder228.itmo.lab7.connection.AnswerMsg;
+import ru.potatocoder228.itmo.lab7.connection.Ask;
 import ru.potatocoder228.itmo.lab7.data.Coordinates;
 import ru.potatocoder228.itmo.lab7.data.Dragon;
 import ru.potatocoder228.itmo.lab7.data.DragonCave;
@@ -23,13 +23,13 @@ public class ClientConsole {
         this.scriptMode = mode;
     }
 
-    public AnswerMsg inputCommand() throws FileNotFoundException, RecursiveScriptExecuteException {
+    public Ask inputCommand() throws FileNotFoundException, RecursiveScriptExecuteException {
         System.out.print("Введите команду:");
         if (!scriptMode) {
             scanner = new Scanner(System.in);
         }
         String command = scanner.nextLine().toLowerCase();
-        AnswerMsg msg = new AnswerMsg();
+        Ask msg = new Ask();
         String[] lines = command.split("\\s+", 2);
         if (lines.length == 2 && (lines[0].equals("filter_less_than_cave") || lines[0].equals("remove_by_id") || lines[0].equals("filter_greater_than_description"))) {
             msg.setMessage(command);

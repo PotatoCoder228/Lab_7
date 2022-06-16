@@ -31,14 +31,19 @@ public class FilterLessCave implements Command {
 
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
-        String status = "Вот все нужные объекты:\n";
-        StringBuilder string = new StringBuilder();
-        for (Dragon dragon : collectionManager.getCollection()) {
-            if (compareCave(dragon)) {
-                string.append(dragon.toString());
+        String status;
+        try {
+            status = "Вот все нужные объекты:\n";
+            StringBuilder string = new StringBuilder();
+            for (Dragon dragon : collectionManager.getCollection()) {
+                if (compareCave(dragon)) {
+                    string.append(dragon.toString());
+                }
             }
+            status += string.toString();
+        }catch (NumberFormatException e){
+            status = "Некорректный аргумент команды";
         }
-        status += string.toString();
         return status;
     }
 

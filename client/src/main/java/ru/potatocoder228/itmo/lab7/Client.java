@@ -1,7 +1,7 @@
 package ru.potatocoder228.itmo.lab7;
 
-import ru.potatocoder228.itmo.lab7.connection.AnswerMsg;
-import ru.potatocoder228.itmo.lab7.connection.AskMsg;
+import ru.potatocoder228.itmo.lab7.connection.Ask;
+import ru.potatocoder228.itmo.lab7.connection.Answer;
 import ru.potatocoder228.itmo.lab7.exceptions.ConnectionException;
 import ru.potatocoder228.itmo.lab7.exceptions.RecursiveScriptExecuteException;
 
@@ -20,7 +20,7 @@ import java.util.Scanner;
 public class Client {
     private SocketChannel socketChannel;
     private Selector selector;
-    private AnswerMsg answerMsg = new AnswerMsg();
+    private Ask ask = new Ask();
     private InetAddress host;
     private int port;
 
@@ -40,15 +40,15 @@ public class Client {
         try {
             ClientConsole clientConsole = new ClientConsole(false);
             while (true) {
-                answerMsg = clientConsole.inputCommand();
-                if (answerMsg.getMessage().equals("exit")) {
+                ask = clientConsole.inputCommand();
+                if (ask.getMessage().equals("exit")) {
                     System.out.println("Завершение работы приложения...");
                     socketChannel.close();
                     System.exit(0);
                 }
                 startConnection(host, port);
-                sendMessage(answerMsg);
-                AskMsg msg1 = receiveObject();
+                sendMessage(ask);
+                Answer msg1 = receiveObject();
                 System.out.println(msg1.getMessage());
             }
         } catch (RecursiveScriptExecuteException e) {
@@ -113,7 +113,7 @@ public class Client {
         }
     }
 
-    public void sendMessage(AnswerMsg msg) throws IOException {
+    public void sendMessage(Ask msg) throws IOException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
         objectOutputStream.writeObject(msg);
@@ -136,7 +136,7 @@ public class Client {
         }
     }
 
-    public AskMsg receiveObject() throws IOException, ConnectionException {
+    public Answer receiveObject() throws IOException, ConnectionException {
         System.out.println("Читаем пришедший ответ...");
         int count = 0;
         while (true) {
@@ -155,7 +155,7 @@ public class Client {
                             byteBuffer.compact();
                             try {
                                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(outBuffer.array()));
-                                return (AskMsg) objectInputStream.readObject();
+                                return (Answer) objectInputStream.readObject();
                             } catch (StreamCorruptedException e) {
                                 count += 1;
                                 if (count == 3) {

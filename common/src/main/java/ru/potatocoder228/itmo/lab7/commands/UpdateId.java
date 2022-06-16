@@ -32,11 +32,15 @@ public class UpdateId implements Command {
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
-        collectionManager.getCollection().removeIf(dragon -> dragon.getId() == Integer.parseInt(arg));
-        collectionManager.getNewDragon().setId();
-        collectionManager.getNewDragon().setCreationDate();
-        collectionManager.getCollection().add(collectionManager.getNewDragon());
-        status = "Объект успешно обновлён.";
+        try {
+            collectionManager.getCollection().removeIf(dragon -> dragon.getId() == Integer.parseInt(arg));
+            collectionManager.getNewDragon().setId();
+            collectionManager.getNewDragon().setCreationDate();
+            collectionManager.getCollection().add(collectionManager.getNewDragon());
+            status = "Объект успешно обновлён.";
+        }catch (NumberFormatException e){
+            status = "Некорректный аргумент команды";
+        }
         return status;
     }
 

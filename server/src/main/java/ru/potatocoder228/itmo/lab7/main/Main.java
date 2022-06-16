@@ -3,6 +3,8 @@ package ru.potatocoder228.itmo.lab7.main;
 import ru.potatocoder228.itmo.lab7.log.Log;
 import ru.potatocoder228.itmo.lab7.server.Server;
 
+import java.io.IOException;
+
 
 public class Main {
     public static void main(String[] args) {
@@ -28,9 +30,11 @@ public class Main {
             Thread.currentThread().interrupt();
         } catch (NullPointerException e) {
             Log.logger.error("Вы не ввели путь к переменной окружения. Сервер завершает свою работу.");
+            e.printStackTrace();
             Thread.currentThread().interrupt();
         } catch (IllegalArgumentException e) {
             Log.logger.error("Некорректное значение порта. Работа сервера будет завершена...");
+            e.printStackTrace();
             Thread.currentThread().interrupt();
         }
     }
