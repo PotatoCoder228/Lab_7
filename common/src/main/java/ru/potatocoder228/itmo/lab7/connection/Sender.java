@@ -26,11 +26,11 @@ public class Sender implements Runnable{
     public void run() {
         synchronized (RequestHandler.class) {
                 queue = requestHandler.getQueue();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            //try {
+            //    Thread.sleep(2000);
+            //} catch (InterruptedException e) {
+            //    e.printStackTrace();
+            //}
             if (!queue.isEmpty()) {
                     try {
                         //this.address = new InetSocketAddress(InetAddress.getLocalHost(), 6000);

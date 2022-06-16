@@ -67,10 +67,13 @@ public class Server {
                     request.submit(receiver);
                     requestHandler.setReceiver(receiver);
                     requestHandler.start();
+                    requestHandler.join();
                     response.submit(sender);
                 }
             } catch (IOException ignored) {
                 //
+            } catch(InterruptedException e){
+                Log.logger.error("Программист криворукий мудак, почини программу!");
             }
         }
     }
