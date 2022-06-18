@@ -27,7 +27,7 @@ public class ServerConsole extends Thread {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                System.out.print("Введите команду:\n");
+                System.out.print("\nВведите команду:");
                 String line = scanner.nextLine();
                 if (line.equals("exit")) {
                     Log.logger.trace("Завершение работы сервера.");

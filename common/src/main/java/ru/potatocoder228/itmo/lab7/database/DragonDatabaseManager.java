@@ -225,15 +225,16 @@ public class DragonDatabaseManager {
             e.printStackTrace();
         }
     }
-    public void updateCollection(CollectionManager collectionManager){
+
+    public void updateCollection(CollectionManager collectionManager) {
         //language=SQL
         String query = "SELECT * FROM DRAGONS;";
         try (PreparedStatement selectAllStatement = databaseHandler.getPreparedStatement(query)) {
             ResultSet resultSet = selectAllStatement.executeQuery();
             collectionManager.getCollection().clear();
             while (resultSet.next()) {
-                    Dragon dragon = getDragon(resultSet);
-                    collectionManager.addWithoutIdGeneration(dragon);
+                Dragon dragon = getDragon(resultSet);
+                collectionManager.addWithoutIdGeneration(dragon);
             }
             collectionManager.getCollection().sort(new Dragon.SortingComparator());
         } catch (SQLException e) {

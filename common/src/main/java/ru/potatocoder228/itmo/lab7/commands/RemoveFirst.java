@@ -37,6 +37,7 @@ public class RemoveFirst implements Command {
         }
         return status;
     }
+
     public void setArg(String arg) {
         this.arg = arg;
     }

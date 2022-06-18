@@ -9,6 +9,7 @@ import ru.potatocoder228.itmo.lab7.data.DragonType;
 import ru.potatocoder228.itmo.lab7.exceptions.*;
 import ru.potatocoder228.itmo.lab7.user.User;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -39,7 +40,8 @@ public class ClientConsole {
                 System.out.print("\nВведите новое имя пользователя:");
                 userName = scanner.nextLine();
                 System.out.print("Введите новый пароль:");
-                password = scanner.nextLine();
+                Console console = System.console();
+                password = new String(console.readPassword());
                 user = new User(userName, password);
                 msg.setUser(user);
                 msg.setStatus(Status.LOGIN);
@@ -47,8 +49,13 @@ public class ClientConsole {
             if (!msg.getStatus().equals(Status.LOGIN)) {
                 System.out.print("\nВведите логин:");
                 userName = scanner.nextLine();
+                Console console = System.console();
                 System.out.print("Введите пароль:");
-                password = scanner.nextLine();
+                if (console == null) {
+                    password = scanner.nextLine();
+                } else {
+                    password = new String(console.readPassword());
+                }
                 user = new User(userName, password);
                 msg.setUser(user);
                 msg.setStatus(Status.AUTHORIZATION);

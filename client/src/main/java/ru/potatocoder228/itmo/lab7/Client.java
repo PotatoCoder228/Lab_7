@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import static java.net.SocketOptions.SO_KEEPALIVE;
-
 public class Client {
     private SocketChannel socketChannel;
     private Selector selector;
@@ -166,7 +164,7 @@ public class Client {
                                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(outBuffer.array()));
                                 return (Answer) objectInputStream.readObject();
                             } catch (StreamCorruptedException e) {
-                                if(e.getMessage().contains("invalid stream header")){
+                                if (e.getMessage().contains("invalid stream header")) {
                                     throw new StreamCorruptedException();
                                 }
                             } catch (ClassNotFoundException e) {
