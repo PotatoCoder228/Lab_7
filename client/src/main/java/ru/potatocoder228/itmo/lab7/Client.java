@@ -1,7 +1,8 @@
 package ru.potatocoder228.itmo.lab7;
 
-import ru.potatocoder228.itmo.lab7.connection.Ask;
 import ru.potatocoder228.itmo.lab7.connection.Answer;
+import ru.potatocoder228.itmo.lab7.connection.Ask;
+import ru.potatocoder228.itmo.lab7.connection.ClientStatus;
 import ru.potatocoder228.itmo.lab7.exceptions.ConnectionException;
 import ru.potatocoder228.itmo.lab7.exceptions.RecursiveScriptExecuteException;
 
@@ -17,10 +18,11 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import static java.net.SocketOptions.SO_KEEPALIVE;
+
 public class Client {
     private SocketChannel socketChannel;
     private Selector selector;
-    private Ask ask = new Ask();
     private InetAddress host;
     private int port;
 
@@ -39,23 +41,31 @@ public class Client {
     public void run() throws ConnectionException {
         try {
             ClientConsole clientConsole = new ClientConsole(false);
-            while (true) {
-                ask = clientConsole.inputCommand();
-                if (ask.getMessage().equals("exit")) {
-                    System.out.println("Завершение работы приложения...");
-                    socketChannel.close();
-                    System.exit(0);
+            Ask ask = clientConsole.registration();
+            startConnection(host, port);
+            sendMessage(ask);
+            Answer msg1 = receiveObject();
+            System.out.println(msg1.getMessage());
+            if (msg1.getStatus().equals(ClientStatus.UNKNOWN)) {
+                run();
+            } else {
+                while (true) {
+                    ask = clientConsole.inputCommand();
+                    if (ask.getMessage().equals("exit")) {
+                        System.out.println("Завершение работы приложения...");
+                        socketChannel.close();
+                        System.exit(0);
+                    }
+                    startConnection(host, port);
+                    sendMessage(ask);
+                    msg1 = receiveObject();
+                    System.out.println(msg1.getMessage());
                 }
-                startConnection(host, port);
-                sendMessage(ask);
-                Answer msg1 = receiveObject();
-                System.out.println(msg1.getMessage());
             }
         } catch (RecursiveScriptExecuteException e) {
             run();
         } catch (StreamCorruptedException e) {
             System.out.println("Сервер был перезагружен, переподключаемся...");
-            System.out.print("Введите команду:");
             run();
         } catch (IOException e) {
             System.out.println("Ошибка при получении ответа от сервера. Возможно, он временно недоступен.");
@@ -94,7 +104,7 @@ public class Client {
             socketChannel.register(selector, SelectionKey.OP_CONNECT | SelectionKey.OP_WRITE | SelectionKey.OP_READ);
             socketChannel.connect(new InetSocketAddress(host, port));
             while (true) {
-                selector.select();
+                selector.select(1000);
                 Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
                 while (keys.hasNext()) {
                     SelectionKey key = keys.next();
@@ -126,8 +136,8 @@ public class Client {
                 SelectionKey key = keys.next();
                 keys.remove();
                 if (key.isValid() && key.isWritable()) {
-                    SocketChannel channel = (SocketChannel) key.channel();
-                    channel.write(outBuffer);
+                    SocketChannel socketChannel = (SocketChannel) key.channel();
+                    socketChannel.write(outBuffer);
                     if (outBuffer.remaining() < 1) {
                         return;
                     }
@@ -138,7 +148,6 @@ public class Client {
 
     public Answer receiveObject() throws IOException, ConnectionException {
         System.out.println("Читаем пришедший ответ...");
-        int count = 0;
         while (true) {
             selector.select();
             Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
@@ -157,10 +166,8 @@ public class Client {
                                 ObjectInputStream objectInputStream = new ObjectInputStream(new ByteArrayInputStream(outBuffer.array()));
                                 return (Answer) objectInputStream.readObject();
                             } catch (StreamCorruptedException e) {
-                                count += 1;
-                                if (count == 3) {
-                                    System.out.println("Некорректный ответ от сервера.");
-                                    run();
+                                if(e.getMessage().contains("invalid stream header")){
+                                    throw new StreamCorruptedException();
                                 }
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();

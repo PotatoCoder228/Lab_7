@@ -1,11 +1,13 @@
 package ru.potatocoder228.itmo.lab7;
 
 import ru.potatocoder228.itmo.lab7.connection.Ask;
+import ru.potatocoder228.itmo.lab7.connection.Status;
 import ru.potatocoder228.itmo.lab7.data.Coordinates;
 import ru.potatocoder228.itmo.lab7.data.Dragon;
 import ru.potatocoder228.itmo.lab7.data.DragonCave;
 import ru.potatocoder228.itmo.lab7.data.DragonType;
 import ru.potatocoder228.itmo.lab7.exceptions.*;
+import ru.potatocoder228.itmo.lab7.user.User;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,22 +19,57 @@ public class ClientConsole {
     private boolean scriptMode;
     private Scanner scanner;
     private LinkedList<Scanner> scanners = new LinkedList<>();
-    private LinkedList<String> namesOfScripts = new LinkedList<>();
+    private final LinkedList<String> namesOfScripts = new LinkedList<>();
     private boolean recursive = false;
+    private String userName;
+    private User user;
 
     public ClientConsole(boolean mode) {
         this.scriptMode = mode;
     }
 
-    public Ask inputCommand() throws FileNotFoundException, RecursiveScriptExecuteException {
+    public Ask registration() {
         Ask msg = new Ask();
         try {
-            System.out.print("Введите команду:");
+            System.out.print("\nВы уже зарегистрированный пользователь? Если да, введите \"Да\":");
+            scanner = new Scanner(System.in);
+            String isUser = scanner.nextLine();
+            String password;
+            if (!isUser.equals("Да")) {
+                System.out.print("\nВведите новое имя пользователя:");
+                userName = scanner.nextLine();
+                System.out.print("Введите новый пароль:");
+                password = scanner.nextLine();
+                user = new User(userName, password);
+                msg.setUser(user);
+                msg.setStatus(Status.LOGIN);
+            }
+            if (!msg.getStatus().equals(Status.LOGIN)) {
+                System.out.print("\nВведите логин:");
+                userName = scanner.nextLine();
+                System.out.print("Введите пароль:");
+                password = scanner.nextLine();
+                user = new User(userName, password);
+                msg.setUser(user);
+                msg.setStatus(Status.AUTHORIZATION);
+            }
+            return msg;
+        } catch (NoSuchElementException e) {
+            return registration();
+        }
+    }
+
+    public Ask inputCommand() throws FileNotFoundException, RecursiveScriptExecuteException {
+        Ask msg = new Ask();
+        msg.setStatus(Status.RUNNING);
+        try {
+            System.out.print("\nВведите команду:");
             if (!scriptMode) {
                 scanner = new Scanner(System.in);
             }
             String command = scanner.nextLine().toLowerCase();
             String[] lines = command.split("\\s+", 2);
+            msg.setUser(user);
             if (lines.length == 2 && (lines[0].equals("filter_less_than_cave") || lines[0].equals("remove_by_id") || lines[0].equals("filter_greater_than_description"))) {
                 msg.setMessage(command);
             } else if (lines.length == 1 && !lines[0].equals("add") && !lines[0].equals("add_if_max") && !lines[0].equals("remove_greater")) {
@@ -71,7 +108,7 @@ public class ClientConsole {
                 }
                 msg.setMessage(this.scanner.nextLine());
             }
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             msg.setMessage("Uncorrect command");
         }
         return msg;
@@ -89,6 +126,7 @@ public class ClientConsole {
         DragonType type = inputType();
         DragonCave cave = inputCave();
         dragon = new Dragon(name, coordinates, age, description, speaking, type, cave);
+        dragon.setUserLogin(userName);
         return dragon;
     }
 

@@ -1,16 +1,18 @@
 package ru.potatocoder228.itmo.lab7.data;
 
-import ru.potatocoder228.itmo.lab7.file.FileManager;
+import ru.potatocoder228.itmo.lab7.database.DragonDatabaseManager;
+import ru.potatocoder228.itmo.lab7.user.User;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class CollectionManager {
-    private LinkedList<Dragon> collection;
-    private LinkedHashSet<Integer> idList = FileManager.idList;
-    private FileManager fileManager;
+    private final LinkedList<Dragon> collection;
+    private final LinkedHashSet<Integer> idList = new LinkedHashSet<>();
+    private User user;
+    private DragonDatabaseManager dragonManager;
     private Dragon newDragon;
-    private LocalDateTime creatingTime = LocalDateTime.now();
+    private LocalDateTime creatingTime;
     private HashMap<String, String> map;
 
     public CollectionManager(LinkedList<Dragon> collection) {
@@ -18,8 +20,14 @@ public class CollectionManager {
         Collections.sort(collection);
     }
 
-    public LinkedHashSet<Integer> getIdList() {
-        return this.idList;
+    public CollectionManager() {
+        collection = new LinkedList<>();
+        creatingTime = LocalDateTime.now();
+    }
+
+    public void addWithoutIdGeneration(Dragon worker) {
+        idList.add(worker.getId());
+        collection.add(worker);
     }
 
     public void setDragon(Dragon dragon) {
@@ -34,44 +42,8 @@ public class CollectionManager {
         return collection.size();
     }
 
-    public String getType() {
-        return Dragon.class.getName();
-    }
-
     public LocalDateTime getCreatingTime() {
         return this.creatingTime;
-    }
-
-    public Dragon getFirst() {
-        try {
-            return collection.getFirst();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    public Dragon getLast() {
-        try {
-            return collection.getLast();
-        } catch (NoSuchElementException e) {
-            return null;
-        }
-    }
-
-    public void addLast(Dragon dragon) {
-        collection.add(dragon);
-    }
-
-    public void clear() {
-        collection.clear();
-    }
-
-    public void saveCollection() {
-        fileManager.writeObjects(collection);
-    }
-
-    public void setFileManager(FileManager fileManager) {
-        this.fileManager = fileManager;
     }
 
     public HashMap<String, String> getInfo() {
@@ -85,4 +57,21 @@ public class CollectionManager {
     public LinkedList<Dragon> getCollection() {
         return this.collection;
     }
+
+    public void setDragonManager(DragonDatabaseManager dragonManager) {
+        this.dragonManager = dragonManager;
+    }
+
+    public DragonDatabaseManager getDragonManager() {
+        return this.dragonManager;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
 }

@@ -10,9 +10,7 @@ import java.util.Map;
 
 public class Add implements Command {
 
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class Add implements Command {
      */
 
     public Add(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "add";
-        description = "добавление нового элемента в коллекцию.";
+        String nameOfCommand = "add";
+        String description = "добавление нового элемента в коллекцию.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -31,17 +29,11 @@ public class Add implements Command {
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
-        collectionManager.getNewDragon().setCreationDate();
-        collectionManager.getNewDragon().setId();
-        int count = (int) collectionManager.getCollection()
-                .stream()
-                .filter(w -> w.getId() == collectionManager.getNewDragon().getId())
-                .count();
-        if (count == 0) {
-            collectionManager.addLast(collectionManager.getNewDragon());
-            status = "Объект успешно добавлен в коллекцию.";
-        } else {
-            status = "Объект с таким id уже есть в коллекции.";
+        try {
+            collectionManager.getDragonManager().add(collectionManager.getNewDragon());
+            status = "Команда выполнена.";
+        } catch (NullPointerException e) {
+            status = "Не удалось добавить элемент в коллекцию...";
         }
         return status;
     }

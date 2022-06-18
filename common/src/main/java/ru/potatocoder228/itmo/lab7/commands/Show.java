@@ -11,9 +11,7 @@ import java.util.Map;
  */
 
 public class Show implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -23,8 +21,8 @@ public class Show implements Command {
      */
 
     public Show(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "show";
-        description = "вывод элементов коллекции в строковом представлении.";
+        String nameOfCommand = "show";
+        String description = "вывод элементов коллекции в строковом представлении.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -38,7 +36,7 @@ public class Show implements Command {
             string.append(dragon.toString());
         }
         status += string.toString();
-        if (string.length() == 0) {
+        if (collectionManager.getCollection().isEmpty()) {
             status = "Коллекция пуста.";
         }
         return status;

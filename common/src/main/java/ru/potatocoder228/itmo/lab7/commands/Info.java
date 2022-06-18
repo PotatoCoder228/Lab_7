@@ -10,9 +10,7 @@ import java.util.Map;
  */
 
 public class Info implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class Info implements Command {
      */
 
     public Info(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "info";
-        description = "выводит информацию о коллекции.";
+        String nameOfCommand = "info";
+        String description = "выводит информацию о коллекции.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }

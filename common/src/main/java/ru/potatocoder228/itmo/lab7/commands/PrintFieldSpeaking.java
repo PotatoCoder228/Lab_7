@@ -12,9 +12,7 @@ import java.util.Map;
  */
 
 public class PrintFieldSpeaking implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -24,8 +22,8 @@ public class PrintFieldSpeaking implements Command {
      */
 
     public PrintFieldSpeaking(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "print_field_descending_speaking";
-        description = "вывести значения поля speaking всех элементов в порядке убывания.";
+        String nameOfCommand = "print_field_descending_speaking";
+        String description = "вывести значения поля speaking всех элементов в порядке убывания.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }

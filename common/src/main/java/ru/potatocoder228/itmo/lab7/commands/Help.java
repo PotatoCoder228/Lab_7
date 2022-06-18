@@ -11,9 +11,7 @@ import java.util.Map;
  */
 
 public class Help implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -23,9 +21,9 @@ public class Help implements Command {
      */
 
     public Help(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "help";
-        description = "вывод справки по доступным командам.";
-        info.put(nameOfCommand, description);//кладём описание
+        String nameOfCommand = "help";
+        String description = "вывод справки по доступным командам.";
+        info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
 

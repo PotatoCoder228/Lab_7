@@ -21,6 +21,7 @@ public class Dragon implements Collectionable, Serializable {
     private Boolean speaking; //Поле может быть null
     private DragonType type; //Поле может быть null
     private DragonCave cave; //Поле не может быть null
+    private String userLogin;
 
     /**
      * Конструктор, задающий параметры для создания дракона
@@ -47,24 +48,12 @@ public class Dragon implements Collectionable, Serializable {
         return coordinates;
     }
 
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate() {
-        creationDate = LocalDateTime.now();
-    }
-
     public void setCreationDate(LocalDateTime date) {
         creationDate = date;
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId() {
-        id = this.hashCode();
     }
 
     public void setId(int id) {
@@ -74,10 +63,6 @@ public class Dragon implements Collectionable, Serializable {
     @Override
     public String getName() {
         return name;
-    }
-
-    public void setName(String s) {
-        name = s;
     }
 
     public int getAge() {
@@ -103,6 +88,7 @@ public class Dragon implements Collectionable, Serializable {
         s += "  \"speaking\" : " + "\"" + speaking.toString() + "\"" + ",\n";
         s += "  \"type\" : " + type.toString() + "\n";
         s += "  \"cave\" : " + cave.getDepth() + "\n";
+        s += "  \"user_login\" : " + getUserLogin() + "\n";
         return s;
     }
 
@@ -139,12 +125,6 @@ public class Dragon implements Collectionable, Serializable {
         return this.speaking;
     }
 
-    public String[] getAllFields() {
-        return new String[]{name, id.toString(), String.valueOf(coordinates.getX()),
-                coordinates.getY().toString(), creationDate.format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy")), Integer.toString(age), description, speaking.toString(),
-                type.toString(), Float.toString(cave.getDepth())};
-    }
-
     public static class SortingComparator implements Comparator<Dragon> {
         public int compare(Dragon first, Dragon second) {
             int result = Double.compare(first.getCoordinates().getX(), second.getCoordinates().getX());
@@ -154,5 +134,13 @@ public class Dragon implements Collectionable, Serializable {
             }
             return result;
         }
+    }
+
+    public void setUserLogin(String login) {
+        this.userLogin = login;
+    }
+
+    public String getUserLogin() {
+        return this.userLogin;
     }
 }

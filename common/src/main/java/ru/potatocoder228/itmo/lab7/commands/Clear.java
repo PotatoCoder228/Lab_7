@@ -10,9 +10,7 @@ import java.util.Map;
  */
 
 public class Clear implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class Clear implements Command {
      */
 
     public Clear(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "clear";
-        description = "очистить коллекцию.";
+        String nameOfCommand = "clear";
+        String description = "очистить коллекцию.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -31,9 +29,8 @@ public class Clear implements Command {
 
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
-        collectionManager.clear();
-        String status = "Коллекция очищена.";
-        return status;
+        collectionManager.getDragonManager().clear(collectionManager);
+        return "Ваши элементы коллекции удалены.";
     }
 
     public void setArg(String arg) {

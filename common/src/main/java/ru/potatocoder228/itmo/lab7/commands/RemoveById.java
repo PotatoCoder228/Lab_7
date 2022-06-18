@@ -11,9 +11,7 @@ import java.util.Map;
  */
 
 public class RemoveById implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -23,8 +21,8 @@ public class RemoveById implements Command {
      */
 
     public RemoveById(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "remove_by_id";
-        description = "удалить элемент из коллекции по его id.";
+        String nameOfCommand = "remove_by_id";
+        String description = "удалить элемент из коллекции по его id.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -33,18 +31,15 @@ public class RemoveById implements Command {
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
         try {
+            collectionManager.getDragonManager().removeByID(Integer.parseInt(arg), collectionManager);
             boolean exists = collectionManager.getCollection().stream()
-                    .filter(w -> compareId(w.getId())).findAny().isPresent();
+                    .anyMatch(w -> compareId(w.getId()));
             if (exists) {
-                Dragon dragon = collectionManager.getCollection().stream()
-                        .filter(w -> compareId(w.getId())).findAny().get();
-                collectionManager.getIdList().remove(dragon.getId());
-                collectionManager.getCollection().remove(dragon);
                 status = "Объект успешно удалён из коллекции";
             } else {
                 status = "Объекта с таким id не существует...";
             }
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             status = "Некорректный аргумент команды.";
         }
         return status;

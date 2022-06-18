@@ -11,9 +11,7 @@ import java.util.Map;
  */
 
 public class FilterLessCave implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -23,8 +21,8 @@ public class FilterLessCave implements Command {
      */
 
     public FilterLessCave(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "filter_less_than_cave";
-        description = "вывести все элементы, значение поля cave которых меньше заданного.";
+        String nameOfCommand = "filter_less_than_cave";
+        String description = "вывести все элементы, значение поля cave которых меньше заданного.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -37,11 +35,11 @@ public class FilterLessCave implements Command {
             StringBuilder string = new StringBuilder();
             for (Dragon dragon : collectionManager.getCollection()) {
                 if (compareCave(dragon)) {
-                    string.append(dragon.toString());
+                    string.append(dragon);
                 }
             }
             status += string.toString();
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             status = "Некорректный аргумент команды";
         }
         return status;

@@ -11,9 +11,7 @@ import java.util.Map;
  */
 
 public class FilterGreaterDescription implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -23,8 +21,8 @@ public class FilterGreaterDescription implements Command {
      */
 
     public FilterGreaterDescription(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "filter_greater_than_description";
-        description = "вывести элементы, значение поля description которых больше заданного.";
+        String nameOfCommand = "filter_greater_than_description";
+        String description = "вывести элементы, значение поля description которых больше заданного.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -37,11 +35,11 @@ public class FilterGreaterDescription implements Command {
             StringBuilder string = new StringBuilder();
             for (Dragon dragon : collectionManager.getCollection()) {
                 if (compareDescription(dragon)) {
-                    string.append(dragon.toString());
+                    string.append(dragon);
                 }
             }
-            status += string.toString();//TODO
-        }catch (NumberFormatException e){
+            status += string.toString();
+        } catch (NumberFormatException e) {
             status = "Некорректный аргумент команды";
         }
         return status;

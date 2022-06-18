@@ -10,9 +10,7 @@ import java.util.Map;
  */
 
 public class UpdateId implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class UpdateId implements Command {
      */
 
     public UpdateId(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "update";
-        description = "обновить значение элемента коллекции, id которого равен заданному.";
+        String nameOfCommand = "update";
+        String description = "обновить значение элемента коллекции, id которого равен заданному.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -33,12 +31,12 @@ public class UpdateId implements Command {
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
         try {
+            collectionManager.getNewDragon().setId(Integer.parseInt(arg));
+            collectionManager.getDragonManager().updateByID(Integer.parseInt(arg), collectionManager);
             collectionManager.getCollection().removeIf(dragon -> dragon.getId() == Integer.parseInt(arg));
-            collectionManager.getNewDragon().setId();
-            collectionManager.getNewDragon().setCreationDate();
             collectionManager.getCollection().add(collectionManager.getNewDragon());
             status = "Объект успешно обновлён.";
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             status = "Некорректный аргумент команды";
         }
         return status;

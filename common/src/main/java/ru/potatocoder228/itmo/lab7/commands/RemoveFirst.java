@@ -10,9 +10,7 @@ import java.util.Map;
  */
 
 public class RemoveFirst implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class RemoveFirst implements Command {
      */
 
     public RemoveFirst(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "remove_first";
-        description = "удалить первый элемент из коллекции.";
+        String nameOfCommand = "remove_first";
+        String description = "удалить первый элемент из коллекции.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -32,14 +30,13 @@ public class RemoveFirst implements Command {
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
         if (collectionManager.getSize() > 0) {
-            collectionManager.getCollection().removeFirst();
-            status = "Первый элемент коллекции успешно удалён.";
+            collectionManager.getDragonManager().removeFirst(collectionManager.getCollection().getFirst().getId(), collectionManager);
+            status = "Команда успешно выполнена.";
         } else {
             status = "Коллекция пуста.";
         }
         return status;
     }
-
     public void setArg(String arg) {
         this.arg = arg;
     }

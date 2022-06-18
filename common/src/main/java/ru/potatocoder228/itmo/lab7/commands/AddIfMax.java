@@ -10,9 +10,7 @@ import java.util.Map;
  */
 
 public class AddIfMax implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class AddIfMax implements Command {
      */
 
     public AddIfMax(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "add_if_max";
-        description = "добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции";
+        String nameOfCommand = "add_if_max";
+        String description = "добавить новый элемент в коллекцию, если его значение превышает значение наибольшего элемента этой коллекции";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -31,19 +29,22 @@ public class AddIfMax implements Command {
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
         String status;
-        collectionManager.getNewDragon().setCreationDate();
-        collectionManager.getNewDragon().setId();
-        int count = (int) collectionManager.getCollection()
-                .stream()
-                .filter(w -> w.getId() == collectionManager.getNewDragon().getId())
-                .count();
-        if (count == 0 && collectionManager.getCollection().getLast().getAge() < collectionManager.getNewDragon().getAge()) {
-            collectionManager.addLast(collectionManager.getNewDragon());
-            status = "Объект успешно добавлен в коллекцию.";
-        } else if (count > 0) {
-            status = "Объект с таким id уже есть в коллекции.";
+        if (collectionManager.getCollection().isEmpty()) {
+            collectionManager.getDragonManager().add(collectionManager.getNewDragon());
+            status = "Объект успешно добавлен в коллекцию";
         } else {
-            status = "Объект меньше максимального.";
+            int count = (int) collectionManager.getCollection()
+                    .stream()
+                    .filter(w -> w.getId() == collectionManager.getNewDragon().getId())
+                    .count();
+            if (count == 0 && collectionManager.getCollection().getLast().getAge() < collectionManager.getNewDragon().getAge()) {
+                collectionManager.getDragonManager().addIfMax(collectionManager);
+                status = "Команда выполнена.";
+            } else if (count > 0) {
+                status = "Объект с таким id уже есть в коллекции.";
+            } else {
+                status = "Объект меньше максимального.";
+            }
         }
         return status;
     }

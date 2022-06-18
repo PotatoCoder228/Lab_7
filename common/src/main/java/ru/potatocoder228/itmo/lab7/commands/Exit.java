@@ -10,20 +10,18 @@ import java.util.Map;
  */
 
 public class Exit implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
      *
-     * @param info "словарь",возвращающий описание команды по ключу
-     * @param map  "словарь", возвращающий объекты классов, наследующихся от Command
+     * @param info "словарь", возвращающий описание команды по ключу
+     * @param map  "словарь", возвращающий объекты классов, наследующихся от Command'а
      */
 
     public Exit(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "exit";
-        description = "завершить программу(без сохранения в файл).";
+        String nameOfCommand = "exit";
+        String description = "завершить программу(без сохранения в файл).";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -32,7 +30,7 @@ public class Exit implements Command {
     public synchronized String execute(CollectionManager collectionManager) {
         String status = "Завершение работы сервера...";
         System.out.println(status);
-        Thread.currentThread().interrupt();
+        System.exit(0);
         return status;
     }
 

@@ -10,9 +10,7 @@ import java.util.Map;
  */
 
 public class RemoveGreater implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
@@ -22,8 +20,8 @@ public class RemoveGreater implements Command {
      */
 
     public RemoveGreater(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "remove_greater";
-        description = "удалить из коллекции все элементы, превышающие заданный.";
+        String nameOfCommand = "remove_greater";
+        String description = "удалить из коллекции все элементы, превышающие заданный.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -31,11 +29,11 @@ public class RemoveGreater implements Command {
 
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
-        String status = "";
-        collectionManager.getNewDragon().setCreationDate();
-        collectionManager.getNewDragon().setId();
-        collectionManager.getCollection().stream().filter(w -> w.getAge() > collectionManager.getNewDragon().getAge()).forEach(w -> collectionManager.getCollection().remove(w));
-        return status;
+        collectionManager.getCollection()
+                .stream()
+                .filter(w -> w.getAge() > collectionManager.getNewDragon().getAge())
+                .forEach(w -> collectionManager.getDragonManager().removeByID(w.getId(), collectionManager));
+        return "Команда выполнена.";
     }
 
     public void setArg(String arg) {

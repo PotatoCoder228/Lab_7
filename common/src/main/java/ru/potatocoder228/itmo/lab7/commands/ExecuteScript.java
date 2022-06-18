@@ -9,20 +9,18 @@ import java.util.Map;
  */
 
 public class ExecuteScript implements Command {
-    protected String nameOfCommand;
-    protected String description;
-    protected String arg;
+    private String arg;
 
     /**
      * Конструктор, задающий параметры для создания объекта
      *
      * @param info "словарь", возвращающий описание команды по ключу
-     * @param map  "словарь", возвращающий объекты классов, наследующихся от Command
+     * @param map  "словарь", возвращающий объекты классов, наследующихся от Command'а
      */
 
     public ExecuteScript(Map<String, String> info, Map<String, Command> map) {
-        nameOfCommand = "execute_script";
-        description = "считать и исполнить скрипт из указанного файла.";
+        String nameOfCommand = "execute_script";
+        String description = "считать и исполнить скрипт из указанного файла.";
         info.put(nameOfCommand, description);
         map.put(nameOfCommand, this);
     }
@@ -30,7 +28,7 @@ public class ExecuteScript implements Command {
 
     @Override
     public synchronized String execute(CollectionManager collectionManager) {
-        return nameOfCommand;
+        return "Зарезервированная команда.";
     }
 
     public void setArg(String arg) {
