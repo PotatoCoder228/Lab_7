@@ -5,7 +5,6 @@ import ru.potatocoder228.itmo.lab7.user.User;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
@@ -16,7 +15,6 @@ public class CollectionManager {
     private DragonDatabaseManager dragonManager;
     private Dragon newDragon;
     private LocalDateTime creatingTime;
-    private HashMap<String, String> map;
 
     public CollectionManager(LinkedList<Dragon> collection) {
         this.collection = collection;
@@ -47,14 +45,6 @@ public class CollectionManager {
 
     public LocalDateTime getCreatingTime() {
         return this.creatingTime;
-    }
-
-    public HashMap<String, String> getInfo() {
-        return this.map;
-    }
-
-    public void setInfo(HashMap<String, String> map) {
-        this.map = map;
     }
 
     public LinkedList<Dragon> getCollection() {

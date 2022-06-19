@@ -1,24 +1,20 @@
 package ru.potatocoder228.itmo.lab7.server;
 
-import ru.potatocoder228.itmo.lab7.commands.Command;
 import ru.potatocoder228.itmo.lab7.commands.CommandManager;
 import ru.potatocoder228.itmo.lab7.database.DatabaseHandler;
 import ru.potatocoder228.itmo.lab7.log.Log;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class ServerConsole extends Thread {
-    private HashMap<String, Command> map;
     private CommandManager commandManager;
     private ServerSocket serverSocket;
     private DatabaseHandler databaseHandler;
 
-    public ServerConsole(HashMap<String, Command> map, CommandManager commandManager, DatabaseHandler databaseHandler) {
-        this.map = map;
+    public ServerConsole(CommandManager commandManager, DatabaseHandler databaseHandler) {
         this.commandManager = commandManager;
         this.databaseHandler = databaseHandler;
     }

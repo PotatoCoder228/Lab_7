@@ -1,6 +1,7 @@
 package ru.potatocoder228.itmo.lab7.server;
 
-import ru.potatocoder228.itmo.lab7.commands.*;
+import ru.potatocoder228.itmo.lab7.commands.Command;
+import ru.potatocoder228.itmo.lab7.commands.CommandManager;
 import ru.potatocoder228.itmo.lab7.connection.Answer;
 import ru.potatocoder228.itmo.lab7.connection.Ask;
 import ru.potatocoder228.itmo.lab7.connection.ClientStatus;
@@ -43,8 +44,6 @@ public class Server {
         try {
 
             this.serverSocket = new ServerSocket(port);
-            clientCommands = loadClientCommands();
-            HashMap<String, Command> serverCommands = loadServerCommands();
 
 
             DatabaseHandler databaseHandler = new DatabaseHandler(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
@@ -55,7 +54,7 @@ public class Server {
             collectionManager.getDragonManager().deserializeCollection(collectionManager);
 
             commandManager = new CommandManager(collectionManager);
-            console = new ServerConsole(serverCommands, commandManager, databaseHandler);
+            console = new ServerConsole(commandManager, databaseHandler);
 
             request = Executors.newCachedThreadPool();
             response = Executors.newCachedThreadPool();
@@ -102,16 +101,15 @@ public class Server {
                             String command = ask.getMessage();
                             String[] commandExecuter = command.split("\\s+", 2);
                             commandManager.setUser(ask.getUser());
-                            commandManager.setCollectionInfo(clientInfo);
                             commandManager.setNewDragon(ask.getDragon());
                             if (commandExecuter.length == 2) {
-                                String clientMessage = commandManager.clientRun(commandExecuter[0], commandExecuter[1], clientCommands);
+                                String clientMessage = commandManager.commandRun(commandExecuter[0], commandExecuter[1]);
                                 Log.logger.trace("Команда: " + command);
                                 answer.setMessage(clientMessage);
                                 answer.setStatus(ClientStatus.REGISTER);
                                 Log.logger.trace("Ответ обработан.");
                             } else if (commandExecuter.length == 1) {
-                                String clientMessage = commandManager.clientRun(commandExecuter[0], "", clientCommands);
+                                String clientMessage = commandManager.commandRun(commandExecuter[0], "");
                                 Log.logger.trace("Команда: " + command);
                                 answer.setMessage(clientMessage);
                                 answer.setStatus(ClientStatus.REGISTER);
@@ -175,33 +173,5 @@ public class Server {
                 e.printStackTrace();
             }
         }
-    }
-
-    public HashMap<String, Command> loadServerCommands() {
-        HashMap<String, Command> commands = new HashMap<>();
-        serverInfo = new HashMap<>();
-        new Exit(serverInfo, commands);
-        return commands;
-    }
-
-    public HashMap<String, Command> loadClientCommands() {
-        HashMap<String, Command> commands = new HashMap<>();
-        clientInfo = new HashMap<>();
-        new Add(clientInfo, commands);
-        new AddIfMax(clientInfo, commands);
-        new Clear(clientInfo, commands);
-        new ExecuteScript(clientInfo, commands);
-        new Exit(clientInfo, commands);
-        new FilterGreaterDescription(clientInfo, commands);
-        new FilterLessCave(clientInfo, commands);
-        new Help(clientInfo, commands);
-        new Info(clientInfo, commands);
-        new PrintFieldSpeaking(clientInfo, commands);
-        new RemoveById(clientInfo, commands);
-        new RemoveFirst(clientInfo, commands);
-        new RemoveGreater(clientInfo, commands);
-        new Show(clientInfo, commands);
-        new UpdateId(clientInfo, commands);
-        return commands;
     }
 }

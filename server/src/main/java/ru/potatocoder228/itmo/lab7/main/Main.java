@@ -30,6 +30,7 @@ public class Main {
             Log.logger.error("Вы не ввели порт. Сервер завершает свою работу.");
             Thread.currentThread().interrupt();
         } catch (NullPointerException e) {
+            e.printStackTrace();
             Log.logger.error("Вы не ввели путь к переменной окружения. Сервер завершает свою работу.");
             Thread.currentThread().interrupt();
         } catch (IllegalArgumentException e) {
