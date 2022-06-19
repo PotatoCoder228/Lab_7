@@ -16,10 +16,6 @@ public class User implements Serializable {
         this.password = hashPass(password);
     }
 
-    public User(String username) {
-        this.username = username;
-    }
-
     public String getLogin() {
         return username;
     }

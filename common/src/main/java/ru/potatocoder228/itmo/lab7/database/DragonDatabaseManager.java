@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DragonDatabaseManager {
+public class DragonDatabaseManager extends CollectionManager{
     private final static String INSERT_WORKER_QUERY = "INSERT INTO DRAGONS (name, coordinates_x, coordinates_y, creation_date, age, description, speaking, type, cave, user_login, id)" +
             "VALUES (?,?,?,?,?,?,?,?,?,?,DEFAULT) RETURNING id;";
 
@@ -236,7 +236,6 @@ public class DragonDatabaseManager {
                 Dragon dragon = getDragon(resultSet);
                 collectionManager.addWithoutIdGeneration(dragon);
             }
-            collectionManager.getCollection().sort(new Dragon.SortingComparator());
         } catch (SQLException e) {
             throw new DatabaseException("Обновление коллекции невозможно...");
         } catch (NullPointerException e) {

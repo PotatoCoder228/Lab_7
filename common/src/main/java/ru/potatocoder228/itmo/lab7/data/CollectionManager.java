@@ -7,22 +7,21 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class CollectionManager {
-    private final LinkedList<Dragon> collection;
-    private final LinkedHashSet<Integer> idList = new LinkedHashSet<>();
+    private final BlockingDeque<Dragon> collection;
+    private final BlockingDeque<Integer> idList = new LinkedBlockingDeque<>();
     private User user;
     private DragonDatabaseManager dragonManager;
     private Dragon newDragon;
     private LocalDateTime creatingTime;
 
-    public CollectionManager(LinkedList<Dragon> collection) {
-        this.collection = collection;
-        Collections.sort(collection);
-    }
-
     public CollectionManager() {
-        collection = new LinkedList<>();
+        collection = new LinkedBlockingDeque<>();
         creatingTime = LocalDateTime.now();
     }
 
@@ -47,7 +46,7 @@ public class CollectionManager {
         return this.creatingTime;
     }
 
-    public LinkedList<Dragon> getCollection() {
+    public BlockingDeque<Dragon> getCollection() {
         return this.collection;
     }
 

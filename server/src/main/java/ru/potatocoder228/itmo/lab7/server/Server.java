@@ -18,27 +18,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Properties;
+import java.net.SocketTimeoutException;
+import java.nio.channels.SocketChannel;
+import java.util.*;
 import java.util.concurrent.*;
 
 public class Server {
-    public HashMap<String, String> clientInfo;
-    public HashMap<String, String> serverInfo;
-    private HashMap<String, Command> clientCommands;
 
-    private BlockingQueue<Ask> receiverQueue;
-    private BlockingQueue<Answer> senderQueue;
+    private Queue<Ask> receiverQueue;
+    private Queue<Answer> senderQueue;
 
     private ServerSocket serverSocket;
 
-    private ServerConsole console;
     private CommandManager commandManager;
 
     private ExecutorService request;
     private ExecutorService response;
 
+    private DatabaseHandler databaseHandler;
     private UserDatabaseManager userManager;
+    private boolean running = true;
 
     public Server(int port, Properties properties) {
         try {
@@ -46,7 +45,7 @@ public class Server {
             this.serverSocket = new ServerSocket(port);
 
 
-            DatabaseHandler databaseHandler = new DatabaseHandler(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
+            databaseHandler = new DatabaseHandler(properties.getProperty("url"), properties.getProperty("user"), properties.getProperty("password"));
             userManager = new UserDatabaseManager(databaseHandler);
             DragonDatabaseManager dragonDatabaseManager = new DragonDatabaseManager(databaseHandler, userManager);
             CollectionManager collectionManager = new CollectionManager();
@@ -54,13 +53,12 @@ public class Server {
             collectionManager.getDragonManager().deserializeCollection(collectionManager);
 
             commandManager = new CommandManager(collectionManager);
-            console = new ServerConsole(commandManager, databaseHandler);
 
             request = Executors.newCachedThreadPool();
             response = Executors.newCachedThreadPool();
 
-            receiverQueue = new LinkedBlockingQueue<>();
-            senderQueue = new LinkedBlockingQueue<>();
+            receiverQueue = new LinkedList<>();
+            senderQueue = new LinkedList<>();
 
 
             Log.logger.trace("Начало работы сервера.");
@@ -70,33 +68,57 @@ public class Server {
         }
     }
 
-    public void run() {
-        console.setServerSocket(serverSocket);
-        console.start();
-        while (true) {
-            try {
-                synchronized (this) {
-                    Socket socket = serverSocket.accept();
-                    Callable receiver = () -> {
-                        Ask ask;
-                        try {
-                            ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
-                            ask = (Ask) is.readObject();
-                            Log.logger.trace("Получен запрос от клиента: " + ask.getMessage() + ", \nСтатус: " + ask.getStatus());
-                            return ask;
-                        } catch (IOException | ClassNotFoundException e) {
-                            Log.logger.error("Некорректный запрос от клиента...");
-                            ask = new Ask();
-                            ask.setStatus(Status.ERROR);
-                            return ask;
-                        }
-                    };
-                    FutureTask<Ask> receiverTask = new FutureTask<Ask>(receiver);
-                    request.submit(receiverTask);
-                    receiverQueue.add(receiverTask.get());
-                    Callable request = () -> {
-                        Answer answer = new Answer();
-                        Ask ask = receiverQueue.poll();
+    public void run() throws IOException {
+        Runnable console = () -> {
+            Scanner scanner = new Scanner(System.in);
+            while (true) {
+                try {
+                    System.out.print("\nВведите команду:");
+                    String line = scanner.nextLine();
+                    if (line.equals("exit")) {
+                        running = false;
+                        databaseHandler.closeConnection();
+                        System.exit(0);
+                    } else {
+                        Log.logger.trace("Некорректная команда.");
+                    }
+                } catch (NoSuchElementException e) {
+                    Thread.currentThread().interrupt();
+                    scanner = new Scanner(System.in);
+                } catch (NullPointerException e) {
+                    Log.logger.error(e.getMessage());
+                }
+            }
+        };
+        new Thread(console).start();
+        while (running) {
+            Socket socket = serverSocket.accept();
+            Callable receiver = () -> {
+                Ask ask;
+                try {
+                    ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
+                    ask = (Ask) is.readObject();
+                    System.out.println("\n");
+                    Log.logger.trace("Получен запрос от клиента: " + ask.getMessage() + ", \nСтатус: " + ask.getStatus());
+                } catch (IOException | ClassNotFoundException e) {
+                    Log.logger.error("Некорректный запрос от клиента...");
+                    e.printStackTrace();
+                    ask = new Ask();
+                    ask.setStatus(Status.ERROR);
+                }
+                return ask;
+            };
+            FutureTask<Ask> task = new FutureTask<>(receiver);
+            request.submit(task);
+            Runnable handler = () -> {
+                try {
+                    receiverQueue.add(task.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Answer answer = new Answer();
+                    Ask ask = receiverQueue.poll();
+                    if (ask != null) {
                         if (ask.getStatus().equals(Status.RUNNING)) {
                             String command = ask.getMessage();
                             String[] commandExecuter = command.split("\\s+", 2);
@@ -121,57 +143,50 @@ public class Server {
                                     userManager.add(ask.getUser());
                                     answer.setMessage("Регистрация прошла успешно!");
                                     answer.setStatus(ClientStatus.REGISTER);
-                                    Log.logger.trace("Ответ обработан.");
                                 } catch (DatabaseException e) {
                                     answer.setMessage(e.getMessage());
                                     answer.setStatus(ClientStatus.UNKNOWN);
-                                    Log.logger.trace("Ответ обработан.");
                                 }
+                                Log.logger.trace("Ответ обработан.");
                             } else if (ask.getStatus().equals(Status.ERROR)) {
                                 answer.setMessage("Ошибка при обработке команды сервером. Повторите свой запрос снова...");
                             } else {
                                 if (userManager.isValid(ask.getUser())) {
                                     answer.setMessage("Авторизация прошла успешно.");
                                     answer.setStatus(ClientStatus.REGISTER);
-                                    Log.logger.trace("Ответ обработан.");
                                 } else {
                                     answer.setMessage("Неверный логин и пароль. Такого пользователя не существует.");
                                     answer.setStatus(ClientStatus.UNKNOWN);
-                                    Log.logger.trace("Ответ обработан.");
                                 }
+                                Log.logger.trace("Ответ обработан.");
                             }
                         }
-                        return answer;
-                    };
-                    FutureTask<Answer> handlerTask = new FutureTask(request);
-                    new Thread(handlerTask).start();
-                    senderQueue.add(handlerTask.get());
-                    Callable sender = () -> {
+                        senderQueue.add(answer);
+                    }
+            };
+            Thread messageHandler = new Thread(handler);
+            messageHandler.start();
+            Runnable sender = () -> {
+                synchronized (this) {
+                    try {
+                        messageHandler.join();
                         Answer answer;
                         if (!senderQueue.isEmpty()) {
-                            try {
-                                answer = senderQueue.poll();
-                                ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                                oos.writeObject(answer);
-                                Log.logger.trace("Сообщение успешно отправлено клиенту.");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Log.logger.error(e.getMessage());
-                            }
+                            answer = senderQueue.poll();
+                            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                            oos.writeObject(answer);
+                            Log.logger.trace("Сообщение успешно отправлено клиенту.");
+                            System.out.print("Введите команду:");
                         }
-                        return "Введите команду:";
-                    };
-                    FutureTask<String> senderTask = new FutureTask<>(sender);
-                    response.submit(senderTask);
-                    System.out.println(senderTask.get());
+                    } catch (IOException | InterruptedException e) {
+                        Log.logger.error(e.getMessage());
+                    }
                 }
-            } catch (IOException ignored) {
-                //
-            } catch (InterruptedException e) {
-                Log.logger.error("Программист криворукий мудак, почини программу!");
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
+            };
+            response.submit(sender);
         }
-    }
+        Log.logger.trace("Завершение работы сервера.");
+        serverSocket.close();
+        databaseHandler.closeConnection();
+        }
 }

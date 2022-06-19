@@ -10,8 +10,8 @@ import java.util.HashMap;
 
 public class CommandManager implements Commandable {
     private final CollectionManager collectionManager;
-    private HashMap<String, Command> map;
-    private HashMap<String, String> help;
+    private final HashMap<String, Command> map;
+    private final HashMap<String, String> help;
 
     public CommandManager(CollectionManager collection) {
         this.collectionManager = collection;
@@ -124,7 +124,6 @@ public class CommandManager implements Commandable {
                 (a) -> {
                     String status = "";
                     StringBuilder string = new StringBuilder();
-                    collectionManager.getCollection().sort(Collections.reverseOrder());
                     for (Dragon dragon : collectionManager.getCollection()) {
                         string.append("\n").append(dragon.getSpeaking());
                     }
@@ -200,10 +199,9 @@ public class CommandManager implements Commandable {
 
     public synchronized String commandRun(String com, String arg) {
         String clientMessage;
-        try {
+        if(this.map.containsKey(com)) {
             clientMessage = this.map.get(com).run(arg);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        }else {
             clientMessage = "Некорректная команда";
         }
         return clientMessage;

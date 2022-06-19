@@ -3,6 +3,7 @@ package ru.potatocoder228.itmo.lab7.main;
 import ru.potatocoder228.itmo.lab7.log.Log;
 import ru.potatocoder228.itmo.lab7.server.Server;
 
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -36,6 +37,8 @@ public class Main {
         } catch (IllegalArgumentException e) {
             Log.logger.error("Некорректное значение порта. Работа сервера будет завершена...");
             Thread.currentThread().interrupt();
+        } catch (IOException e){
+            Log.logger.error("Ошибка при завершении работы:"+ e.getMessage());
         }
     }
 }
