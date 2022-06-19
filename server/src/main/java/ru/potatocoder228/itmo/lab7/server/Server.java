@@ -111,12 +111,13 @@ public class Server {
             FutureTask<Ask> task = new FutureTask<>(receiver);
             request.submit(task);
             Runnable handler = () -> {
-                try {
-                    receiverQueue.add(task.get());
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                Answer answer = new Answer();
+                synchronized (this) {
+                    try {
+                        receiverQueue.add(task.get());
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    Answer answer = new Answer();
                     Ask ask = receiverQueue.poll();
                     if (ask != null) {
                         if (ask.getStatus().equals(Status.RUNNING)) {
@@ -163,6 +164,7 @@ public class Server {
                         }
                         senderQueue.add(answer);
                     }
+                }
             };
             Thread messageHandler = new Thread(handler);
             messageHandler.start();
