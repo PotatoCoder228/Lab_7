@@ -1,6 +1,5 @@
 package ru.potatocoder228.itmo.lab7.server;
 
-import ru.potatocoder228.itmo.lab7.commands.Command;
 import ru.potatocoder228.itmo.lab7.commands.CommandManager;
 import ru.potatocoder228.itmo.lab7.connection.Answer;
 import ru.potatocoder228.itmo.lab7.connection.Ask;
@@ -18,8 +17,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
-import java.nio.channels.SocketChannel;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -111,78 +108,74 @@ public class Server {
             FutureTask<Ask> task = new FutureTask<>(receiver);
             request.submit(task);
             Runnable handler = () -> {
-                synchronized (this) {
-                    try {
-                        receiverQueue.add(task.get());
-                    } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    Answer answer = new Answer();
-                    Ask ask = receiverQueue.poll();
-                    if (ask != null) {
-                        if (ask.getStatus().equals(Status.RUNNING)) {
-                            String command = ask.getMessage();
-                            String[] commandExecuter = command.split("\\s+", 2);
-                            commandManager.setUser(ask.getUser());
-                            commandManager.setNewDragon(ask.getDragon());
-                            if (commandExecuter.length == 2) {
-                                String clientMessage = commandManager.commandRun(commandExecuter[0], commandExecuter[1]);
-                                Log.logger.trace("Команда: " + command);
-                                answer.setMessage(clientMessage);
-                                answer.setStatus(ClientStatus.REGISTER);
-                                Log.logger.trace("Ответ обработан.");
-                            } else if (commandExecuter.length == 1) {
-                                String clientMessage = commandManager.commandRun(commandExecuter[0], "");
-                                Log.logger.trace("Команда: " + command);
-                                answer.setMessage(clientMessage);
-                                answer.setStatus(ClientStatus.REGISTER);
-                                Log.logger.trace("Ответ обработан.");
-                            }
-                        } else {
-                            if (ask.getStatus().equals(Status.LOGIN)) {
-                                try {
-                                    userManager.add(ask.getUser());
-                                    answer.setMessage("Регистрация прошла успешно!");
-                                    answer.setStatus(ClientStatus.REGISTER);
-                                } catch (DatabaseException e) {
-                                    answer.setMessage(e.getMessage());
-                                    answer.setStatus(ClientStatus.UNKNOWN);
-                                }
-                                Log.logger.trace("Ответ обработан.");
-                            } else if (ask.getStatus().equals(Status.ERROR)) {
-                                answer.setMessage("Ошибка при обработке команды сервером. Повторите свой запрос снова...");
-                            } else {
-                                if (userManager.isValid(ask.getUser())) {
-                                    answer.setMessage("Авторизация прошла успешно.");
-                                    answer.setStatus(ClientStatus.REGISTER);
-                                } else {
-                                    answer.setMessage("Неверный логин и пароль. Такого пользователя не существует.");
-                                    answer.setStatus(ClientStatus.UNKNOWN);
-                                }
-                                Log.logger.trace("Ответ обработан.");
-                            }
+                try {
+                    receiverQueue.add(task.get());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                Answer answer = new Answer();
+                Ask ask = receiverQueue.poll();
+                if (ask != null) {
+                    if (ask.getStatus().equals(Status.RUNNING)) {
+                        String command = ask.getMessage();
+                        String[] commandExecuter = command.split("\\s+", 2);
+                        commandManager.setUser(ask.getUser());
+                        commandManager.setNewDragon(ask.getDragon());
+                        if (commandExecuter.length == 2) {
+                            String clientMessage = commandManager.commandRun(commandExecuter[0], commandExecuter[1]);
+                            Log.logger.trace("Команда: " + command);
+                            answer.setMessage(clientMessage);
+                            answer.setStatus(ClientStatus.REGISTER);
+                            Log.logger.trace("Ответ обработан.");
+                        } else if (commandExecuter.length == 1) {
+                            String clientMessage = commandManager.commandRun(commandExecuter[0], "");
+                            Log.logger.trace("Команда: " + command);
+                            answer.setMessage(clientMessage);
+                            answer.setStatus(ClientStatus.REGISTER);
+                            Log.logger.trace("Ответ обработан.");
                         }
-                        senderQueue.add(answer);
+                    } else {
+                        if (ask.getStatus().equals(Status.LOGIN)) {
+                            try {
+                                userManager.add(ask.getUser());
+                                answer.setMessage("Регистрация прошла успешно!");
+                                answer.setStatus(ClientStatus.REGISTER);
+                            } catch (DatabaseException e) {
+                                answer.setMessage(e.getMessage());
+                                answer.setStatus(ClientStatus.UNKNOWN);
+                            }
+                            Log.logger.trace("Ответ обработан.");
+                        } else if (ask.getStatus().equals(Status.ERROR)) {
+                            answer.setMessage("Ошибка при обработке команды сервером. Повторите свой запрос снова...");
+                        } else {
+                            if (userManager.isValid(ask.getUser())) {
+                                answer.setMessage("Авторизация прошла успешно.");
+                                answer.setStatus(ClientStatus.REGISTER);
+                            } else {
+                                answer.setMessage("Неверный логин и пароль. Такого пользователя не существует.");
+                                answer.setStatus(ClientStatus.UNKNOWN);
+                            }
+                            Log.logger.trace("Ответ обработан.");
+                        }
                     }
+                    senderQueue.add(answer);
                 }
             };
             Thread messageHandler = new Thread(handler);
             messageHandler.start();
             Runnable sender = () -> {
-                synchronized (this) {
-                    try {
-                        messageHandler.join();
-                        Answer answer;
-                        if (!senderQueue.isEmpty()) {
-                            answer = senderQueue.poll();
-                            ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
-                            oos.writeObject(answer);
-                            Log.logger.trace("Сообщение успешно отправлено клиенту.");
-                            System.out.print("Введите команду:");
-                        }
-                    } catch (IOException | InterruptedException e) {
-                        Log.logger.error(e.getMessage());
+                try {
+                    messageHandler.join();
+                    Answer answer;
+                    if (!senderQueue.isEmpty()) {
+                        answer = senderQueue.poll();
+                        ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+                        oos.writeObject(answer);
+                        Log.logger.trace("Сообщение успешно отправлено клиенту.");
+                        System.out.print("Введите команду:");
                     }
+                } catch (IOException | InterruptedException e) {
+                    Log.logger.error(e.getMessage());
                 }
             };
             response.submit(sender);
@@ -190,5 +183,5 @@ public class Server {
         Log.logger.trace("Завершение работы сервера.");
         serverSocket.close();
         databaseHandler.closeConnection();
-        }
+    }
 }

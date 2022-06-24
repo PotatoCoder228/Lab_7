@@ -5,7 +5,6 @@ import ru.potatocoder228.itmo.lab7.data.Dragon;
 import ru.potatocoder228.itmo.lab7.user.User;
 
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.HashMap;
 
 public class CommandManager implements Commandable {
@@ -199,9 +198,9 @@ public class CommandManager implements Commandable {
 
     public synchronized String commandRun(String com, String arg) {
         String clientMessage;
-        if(this.map.containsKey(com)) {
+        if (this.map.containsKey(com)) {
             clientMessage = this.map.get(com).run(arg);
-        }else {
+        } else {
             clientMessage = "Некорректная команда";
         }
         return clientMessage;

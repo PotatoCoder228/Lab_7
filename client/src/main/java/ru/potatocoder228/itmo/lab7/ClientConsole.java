@@ -41,7 +41,11 @@ public class ClientConsole {
                 userName = scanner.nextLine();
                 System.out.print("Введите новый пароль:");
                 Console console = System.console();
-                password = new String(console.readPassword());
+                if (console == null) {
+                    password = scanner.nextLine();
+                } else {
+                    password = new String(console.readPassword());
+                }
                 user = new User(userName, password);
                 msg.setUser(user);
                 msg.setStatus(Status.LOGIN);

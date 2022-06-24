@@ -37,8 +37,8 @@ public class Main {
         } catch (IllegalArgumentException e) {
             Log.logger.error("Некорректное значение порта. Работа сервера будет завершена...");
             Thread.currentThread().interrupt();
-        } catch (IOException e){
-            Log.logger.error("Ошибка при завершении работы:"+ e.getMessage());
+        } catch (IOException e) {
+            Log.logger.error("Ошибка при завершении работы:" + e.getMessage());
         }
     }
 }

@@ -4,13 +4,8 @@ import ru.potatocoder228.itmo.lab7.database.DragonDatabaseManager;
 import ru.potatocoder228.itmo.lab7.user.User;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class CollectionManager {
     private final BlockingDeque<Dragon> collection;
