@@ -91,9 +91,10 @@ public class DragonDatabaseManager extends CollectionManager {
         statement.setString(10, dragon.getUserLogin());
     }
 
-    public void add(Dragon dragon) {
+    public void add(CollectionManager collectionManager) {
         databaseHandler.setCommitMode();
         databaseHandler.setSavepoint();
+        Dragon dragon = collectionManager.getNewDragon();
         try (PreparedStatement statement = databaseHandler.getPreparedStatement(INSERT_WORKER_QUERY, true)) {
             setDragon(statement, dragon);
             if (statement.executeUpdate() == 0) throw new DatabaseException();
@@ -108,6 +109,7 @@ public class DragonDatabaseManager extends CollectionManager {
             throw new DatabaseException("Невозможно добавить элемент в базу данных.");
         } finally {
             databaseHandler.setNormalMode();
+            updateCollection(collectionManager);
         }
     }
 
@@ -179,6 +181,7 @@ public class DragonDatabaseManager extends CollectionManager {
             throw new DatabaseException("Не могу добавить элемент в базу данных...");
         } finally {
             databaseHandler.setNormalMode();
+            updateCollection(collectionManager);
         }
     }
 
@@ -199,6 +202,7 @@ public class DragonDatabaseManager extends CollectionManager {
             throw new DatabaseException("Не могу очистить базу данных.");
         } finally {
             databaseHandler.setNormalMode();
+            updateCollection(collectionManager);
         }
     }
 

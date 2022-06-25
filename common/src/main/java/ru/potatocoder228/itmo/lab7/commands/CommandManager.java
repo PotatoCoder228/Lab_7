@@ -20,7 +20,7 @@ public class CommandManager implements Commandable {
         addCommand("add", "добавление нового элемента в коллекцию.", (a) -> {
             String status;
             try {
-                collectionManager.getDragonManager().add(collectionManager.getNewDragon());
+                collectionManager.getDragonManager().add(collectionManager);
                 status = "Команда выполнена.";
             } catch (NullPointerException e) {
                 status = "Не удалось добавить элемент в коллекцию...";
@@ -33,7 +33,7 @@ public class CommandManager implements Commandable {
                 (a) -> {
                     String status;
                     if (collectionManager.getCollection().isEmpty()) {
-                        collectionManager.getDragonManager().add(collectionManager.getNewDragon());
+                        collectionManager.getDragonManager().add(collectionManager);
                         status = "Объект успешно добавлен в коллекцию";
                     } else {
                         int count = (int) collectionManager.getCollection()
@@ -69,6 +69,7 @@ public class CommandManager implements Commandable {
 
         addCommand("filter_greater_than_description", "вывести элементы, значение поля description которых больше заданного.",
                 (a) -> {
+                    collectionManager.getDragonManager().updateCollection(collectionManager);
                     String status;
                     try {
                         status = "Вот все нужные объекты:\n";
@@ -88,6 +89,7 @@ public class CommandManager implements Commandable {
 
         addCommand("filter_less_than_cave", "вывести все элементы, значение поля cave которых меньше заданного.",
                 (a) -> {
+                    collectionManager.getDragonManager().updateCollection(collectionManager);
                     String status;
                     try {
                         status = "Вот все нужные объекты:\n";
@@ -113,6 +115,7 @@ public class CommandManager implements Commandable {
 
         addCommand("info", "выводит информацию о коллекции.",
                 (a) -> {
+                    collectionManager.getDragonManager().updateCollection(collectionManager);
                     String status = "\nИнформация о коллекции:" + "\n\tТип коллекции: LinkedList" + "\n\tВремя создания коллекции: ";
                     status += collectionManager.getCreatingTime().format(DateTimeFormatter.ofPattern("HH:mm dd.MM.yyyy"));
                     status += "\n\tКоличество элементов в коллекции: " + collectionManager.getSize();
@@ -121,6 +124,7 @@ public class CommandManager implements Commandable {
 
         addCommand("print_field_descending_speaking", "вывести значения поля speaking всех элементов в порядке убывания.",
                 (a) -> {
+                    collectionManager.getDragonManager().updateCollection(collectionManager);
                     String status = "";
                     StringBuilder string = new StringBuilder();
                     for (Dragon dragon : collectionManager.getCollection()) {
@@ -168,6 +172,7 @@ public class CommandManager implements Commandable {
                 });
         addCommand("show", "вывод элементов коллекции в строковом представлении.",
                 (a) -> {
+                    collectionManager.getDragonManager().updateCollection(collectionManager);
                     String status = "Вот все объекты коллекции:\n";
                     StringBuilder string = new StringBuilder();
                     for (Dragon dragon : collectionManager.getCollection()) {
