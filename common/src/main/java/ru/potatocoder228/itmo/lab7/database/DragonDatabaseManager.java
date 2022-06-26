@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DragonDatabaseManager extends CollectionManager {
-    private final static String INSERT_WORKER_QUERY = "INSERT INTO DRAGONS (name, coordinates_x, coordinates_y, creation_date, age, description, speaking, type, cave, user_login, id)" +
+    private final static String INSERT_DRAGON_QUERY = "INSERT INTO DRAGONS (name, coordinates_x, coordinates_y, creation_date, age, description, speaking, type, cave, user_login, id)" +
             "VALUES (?,?,?,?,?,?,?,?,?,?,DEFAULT) RETURNING id;";
 
     private final DatabaseHandler databaseHandler;
@@ -95,7 +95,7 @@ public class DragonDatabaseManager extends CollectionManager {
         databaseHandler.setCommitMode();
         databaseHandler.setSavepoint();
         Dragon dragon = collectionManager.getNewDragon();
-        try (PreparedStatement statement = databaseHandler.getPreparedStatement(INSERT_WORKER_QUERY, true)) {
+        try (PreparedStatement statement = databaseHandler.getPreparedStatement(INSERT_DRAGON_QUERY, true)) {
             setDragon(statement, dragon);
             if (statement.executeUpdate() == 0) throw new DatabaseException();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -168,7 +168,7 @@ public class DragonDatabaseManager extends CollectionManager {
         databaseHandler.setCommitMode();
         databaseHandler.setSavepoint();
         try (Statement getStatement = databaseHandler.getStatement();
-             PreparedStatement insertStatement = databaseHandler.getPreparedStatement(INSERT_WORKER_QUERY)) {
+             PreparedStatement insertStatement = databaseHandler.getPreparedStatement(INSERT_DRAGON_QUERY)) {
 
             ResultSet resultSet = getStatement.executeQuery(getMaxQuery);
             if (!resultSet.next()) throw new DatabaseException("Добавление невозможно.");
